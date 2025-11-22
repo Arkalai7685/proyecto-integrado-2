@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Testimonios - ImpulsaMente{% endblock %}
+
+{% block nav_testimonios %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/testimonios.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <!-- Hero Section -->
+    <section class="testimonios-hero">
+        <div class="container">
+            <h1 class="hero-title">Lo que dicen nuestros estudiantes</h1>
+            <p class="hero-subtitle">Historias reales de superación, crecimiento y éxito académico</p>
+        </div>
+    </section>
+
+    <!-- Estadísticas -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Estudiantes Atendidos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Satisfacción</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4.8/5</div>
+                    <div class="stat-label">Calificación Promedio</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">200+</div>
+                    <div class="stat-label">Tesis Completadas</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonios Grid -->
+    <section class="testimonios-section">
+        <div class="container">
+            <h2 class="section-title">Testimonios de Nuestros Estudiantes</h2>
+            
+            <div class="testimonios-grid">
+                <!-- Testimonio 1 -->
+                <div class="testimonio-card">
+                    <div class="testimonio-header">
+                        <img src="https://ui-avatars.com/api/?name=Maria+Rodriguez&background=ff8c42&color=fff&size=80&rounded=true" alt="María Rodríguez" class="testimonio-avatar">
+                        <div class="testimonio-info">
+                            <h3>María Rodríguez</h3>
+                            <p>Psicología Clínica</p>
+                            <div class="rating">★★★★★</div>
+                        </div>
+                    </div>
+                    <div class="testimonio-content">
+                        <p>"ImpulsaMente fue clave en mi proceso de tesis. El apoyo constante y la guía profesional me ayudaron a superar mis bloqueos creativos. Logré terminar mi tesis en tiempo récord y con excelentes resultados."</p>
+                    </div>
+                    <div class="testimonio-service">Servicio: Tutoría - Plan Premium</div>
+                </div>
+
+                <!-- Testimonio 2 -->
+                <div class="testimonio-card">
+                    <div class="testimonio-header">
+                        <img src="https://ui-avatars.com/api/?name=Carlos+Mendez&background=3498db&color=fff&size=80&rounded=true" alt="Carlos Méndez" class="testimonio-avatar">
+                        <div class="testimonio-info">
+                            <h3>Carlos Méndez</h3>
+                            <p>Ingeniería de Sistemas</p>
+                            <div class="rating">★★★★★</div>
+                        </div>
+                    </div>
+                    <div class="testimonio-content">
+                        <p>"Excelente servicio. Los tutores son muy profesionales y tienen una metodología clara. Me ayudaron no solo con mi tesis, sino también a mejorar mis habilidades de investigación."</p>
+                    </div>
+                    <div class="testimonio-service">Servicio: Plan Estudiante - Avanzado</div>
+                </div>
+
+                <!-- Testimonio 3 -->
+                <div class="testimonio-card">
+                    <div class="testimonio-header">
+                        <img src="https://ui-avatars.com/api/?name=Ana+Torres&background=9b59b6&color=fff&size=80&rounded=true" alt="Ana Torres" class="testimonio-avatar">
+                        <div class="testimonio-info">
+                            <h3>Ana Torres</h3>
+                            <p>Administración de Empresas</p>
+                            <div class="rating">★★★★★</div>
+                        </div>
+                    </div>
+                    <div class="testimonio-content">
+                        <p>"Estaba muy estresada con mi tesis y el apoyo terapéutico que recibí fue fundamental. No solo mejoré mi salud mental, sino que también recuperé la motivación para terminar mi trabajo."</p>
+                    </div>
+                    <div class="testimonio-service">Servicio: Terapia - Sesiones Individuales</div>
+                </div>
+
+                <!-- Testimonio 4 -->
+                <div class="testimonio-card">
+                    <div class="testimonio-header">
+                        <img src="https://ui-avatars.com/api/?name=Pedro+Sanchez&background=27ae60&color=fff&size=80&rounded=true" alt="Pedro Sánchez" class="testimonio-avatar">
+                        <div class="testimonio-info">
+                            <h3>Pedro Sánchez</h3>
+                            <p>Derecho</p>
+                            <div class="rating">★★★★☆</div>
+                        </div>
+                    </div>
+                    <div class="testimonio-content">
+                        <p>"La plataforma es muy completa y el seguimiento personalizado marcó la diferencia. Recomiendo especialmente el plan estudiante para quienes necesitan apoyo integral."</p>
+                    </div>
+                    <div class="testimonio-service">Servicio: Plan Estudiante - Básico</div>
+                </div>
+
+                <!-- Testimonio 5 -->
+                <div class="testimonio-card">
+                    <div class="testimonio-header">
+                        <img src="https://ui-avatars.com/api/?name=Laura+Gomez&background=e74c3c&color=fff&size=80&rounded=true" alt="Laura Gómez" class="testimonio-avatar">
+                        <div class="testimonio-info">
+                            <h3>Laura Gómez</h3>
+                            <p>Medicina</p>
+                            <div class="rating">★★★★★</div>
+                        </div>
+                    </div>
+                    <div class="testimonio-content">
+                        <p>"Como estudiante de medicina, tenía poco tiempo y mucho estrés. El paquete de sesiones me permitió organizar mejor mi tiempo y mantener mi bienestar emocional durante todo el proceso."</p>
+                    </div>
+                    <div class="testimonio-service">Servicio: Terapia - Paquete 10 Sesiones</div>
+                </div>
+
+                <!-- Testimonio 6 -->
+                <div class="testimonio-card">
+                    <div class="testimonio-header">
+                        <img src="https://ui-avatars.com/api/?name=Jorge+Ramirez&background=f39c12&color=fff&size=80&rounded=true" alt="Jorge Ramírez" class="testimonio-avatar">
+                        <div class="testimonio-info">
+                            <h3>Jorge Ramírez</h3>
+                            <p>Arquitectura</p>
+                            <div class="rating">★★★★★</div>
+                        </div>
+                    </div>
+                    <div class="testimonio-content">
+                        <p>"Los tutores de ImpulsaMente tienen una gran experiencia y saben cómo guiarte en cada etapa. Mi tesis fue aprobada con mención honorífica gracias a su apoyo."</p>
+                    </div>
+                    <div class="testimonio-service">Servicio: Tutoría - Plan Estándar</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Testimonios -->
+    <section class="video-testimonios">
+        <div class="container">
+            <h2 class="section-title">Historias en Video</h2>
+            <div class="video-grid">
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <img src="https://via.placeholder.com/400x250/ff8c42/ffffff?text=Video+Testimonio+1" alt="Video testimonio">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <h3>Mi experiencia con ImpulsaMente</h3>
+                    <p>Estudiante de Psicología comparte su historia</p>
+                </div>
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <img src="https://via.placeholder.com/400x250/3498db/ffffff?text=Video+Testimonio+2" alt="Video testimonio">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <h3>Cómo superé el estrés de tesis</h3>
+                    <p>Testimonio sobre terapia y apoyo emocional</p>
+                </div>
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <img src="https://via.placeholder.com/400x250/27ae60/ffffff?text=Video+Testimonio+3" alt="Video testimonio">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <h3>De estudiante estancado a graduado</h3>
+                    <p>Historia de éxito con Plan Estudiante</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>¿Listo para escribir tu historia de éxito?</h2>
+            <p>Únete a cientos de estudiantes que han logrado sus metas académicas con nuestro apoyo</p>
+            <div class="cta-buttons">
+                <a href="{% url 'solicitar_servicio' %}" class="btn-primary">Solicitar Servicio</a>
+                <a href="{% url 'quienes_somos' %}" class="btn-secondary">Conocer al Equipo</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

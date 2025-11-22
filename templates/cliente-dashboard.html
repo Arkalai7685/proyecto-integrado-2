@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vista de Cliente - ImpulsaMente{% endblock %}
+
+{% block body_class %}cliente-dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cliente-dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+    <main class="dashboard-main">
+        <div class="container">
+            <div class="dashboard-grid">
+                <!-- Progress Section -->
+                <section class="progress-section">
+                    <div class="progress-card">
+                        <div class="progress-header">
+                            <div class="progress-icon">
+                                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                    <circle cx="20" cy="20" r="18" stroke="#4CAF50" stroke-width="4" fill="none"/>
+                                    <path d="M12 20l6 6 10-12" stroke="#4CAF50" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <h3>PROGRESO DE TESIS</h3>
+                        </div>
+                        
+                        <div class="progress-container">
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar" data-progress="65"></div>
+                            </div>
+                            <span class="progress-percentage">65%</span>
+                        </div>
+                        
+                        <div class="progress-milestones">
+                            <div class="milestone completed">
+                                <span class="milestone-dot"></span>
+                                <span>Propuesta</span>
+                            </div>
+                            <div class="milestone completed">
+                                <span class="milestone-dot"></span>
+                                <span>Marco Teórico</span>
+                            </div>
+                            <div class="milestone active">
+                                <span class="milestone-dot"></span>
+                                <span>Metodología</span>
+                            </div>
+                            <div class="milestone">
+                                <span class="milestone-dot"></span>
+                                <span>Análisis</span>
+                            </div>
+                            <div class="milestone">
+                                <span class="milestone-dot"></span>
+                                <span>Conclusiones</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Folders Section -->
+                <section class="folders-section">
+                    <div class="folders-grid">
+                        <div class="folder-item completed">
+                            <div class="folder-icon">📁</div>
+                            <span>Capítulo 1</span>
+                        </div>
+                        <div class="folder-item completed">
+                            <div class="folder-icon">📁</div>
+                            <span>Capítulo 2</span>
+                        </div>
+                        <div class="folder-item completed">
+                            <div class="folder-icon">📁</div>
+                            <span>Capítulo 3</span>
+                        </div>
+                        <div class="folder-item active">
+                            <div class="folder-icon">📂</div>
+                            <span>Capítulo 4</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Capítulo 5</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Anexos</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Referencias</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Borrador Final</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Presentación</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Defensa</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Documentos</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Calendar Section -->
+                <section class="calendar-section">
+                    <div class="calendar-header">
+                        <h3>PROGRESO DE TESIS</h3>
+                        <div class="calendar-controls">
+                            <select class="month-select">
+                                <option value="10">octubre</option>
+                                <option value="11">noviembre</option>
+                                <option value="12">diciembre</option>
+                            </select>
+                            <select class="year-select">
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                            </select>
+                            <button class="calendar-nav" data-dir="prev">‹</button>
+                            <button class="calendar-nav" data-dir="next">›</button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-location">América/Santiago</div>
+                    
+                    <div class="calendar-grid">
+                        <div class="calendar-header-days">
+                            <div>lun</div>
+                            <div>mar</div>
+                            <div>mié</div>
+                            <div>jue</div>
+                            <div>vie</div>
+                            <div>sáb</div>
+                            <div>dom</div>
+                        </div>
+                        <div class="calendar-days" id="calendarDays">
+                            <!-- Days will be generated by JavaScript -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Messages and Notifications -->
+            <div class="messages-section">
+                <div class="message-card urgent">
+                    <div class="message-header">
+                        <span class="message-type">RECUERDA</span>
+                    </div>
+                    <div class="message-content">
+                        <h4>TU PRÓXIMA SESIÓN ES EN 21 DÍAS</h4>
+                    </div>
+                </div>
+
+                <div class="message-card info">
+                    <div class="message-header">
+                        <span class="message-label">Nuevo mensaje:</span>
+                    </div>
+                    <div class="message-content">
+                        <p>Muy buen progreso, pero recuerda revisar el material didáctico que te envié</p>
+                    </div>
+                </div>
+
+                <div class="message-card history">
+                    <div class="message-header">
+                        <span class="message-label">Mensajes anteriores:</span>
+                    </div>
+                    <div class="message-content">
+                        <p>Recuerda tomar descansos</p>
+                        <p class="message-detail">...</p>
+                        <p class="message-detail">La tesis no te detiene, tú la terminas.</p>
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon">🏆</div>
+                    <div class="achievement-content">
+                        <h4>¡Logro Desbloqueado!</h4>
+                        <p>Has completado 3 capítulos consecutivos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/cliente-dashboard.js' %}"></script>
+{% endblock %}

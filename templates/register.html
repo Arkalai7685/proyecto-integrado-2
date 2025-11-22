@@ -1,0 +1,296 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarse - ImpulsaMente</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/Illustration.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .password-requirements {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+        .password-requirements h4 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+            color: #666;
+            transition: color 0.3s;
+        }
+        .requirement.valid {
+            color: #28a745;
+        }
+        .requirement.invalid {
+            color: #dc3545;
+        }
+        .requirement-icon {
+            font-size: 16px;
+        }
+        .register-form {
+            max-width: 500px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+            font-weight: 500;
+        }
+        .form-help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .login-link a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="login-page">
+    <!-- Header simplificado -->
+    <header class="header-simple">
+        <div class="container">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <img src="{% static 'images/Illustration.png' %}" alt="impulsamente" class="logo-img" style="width:48px;height:48px;">
+                <span class="logo-text">ImpulsaMente</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;">
+                <a href="{% url 'index' %}" class="back-link">← Volver al inicio</a>
+                <a href="{% url 'login' %}" class="nav-link" style="background:transparent;padding:8px 12px;border-radius:16px;color:#fffb;">Iniciar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="login-main">
+        <div class="login-container">
+            <!-- Formulario de registro -->
+            <div class="login-form-container">
+                <h2>Crear Cuenta en ImpulsaMente</h2>
+                <p>Completa el formulario para registrarte y comenzar tu camino hacia el bienestar.</p>
+                
+                {% if pending_service %}
+                <div class="alert alert-info" style="padding:14px 16px;margin:15px 0;border-radius:10px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;box-shadow:0 4px 15px rgba(102, 126, 234, 0.3);">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <span style="font-size:24px;">🎯</span>
+                        <div>
+                            <strong style="font-size:16px;display:block;margin-bottom:4px;">Estás solicitando un servicio</strong>
+                            <span style="font-size:14px;opacity:0.95;">
+                                {% if pending_plan %}
+                                    {{ pending_service }} - Plan {{ pending_plan }}
+                                {% else %}
+                                    {{ pending_service }}
+                                {% endif %}
+                            </span>
+                            <div style="font-size:13px;margin-top:6px;opacity:0.9;">
+                                ✨ Después de registrarte, podrás completar tu solicitud automáticamente
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" style="padding:12px;margin:10px 0;border-radius:8px;{% if message.tags == 'error' %}background:#fee;color:#c00;border:1px solid #fcc;{% elif message.tags == 'success' %}background:#efe;color:#060;border:1px solid #cfc;{% else %}background:#eef;color:#006;border:1px solid #ccf;{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <form method="POST" class="register-form login-form" id="registerForm">
+                    {% csrf_token %}
+                    
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label for="id_username">* Nombre de usuario</label>
+                        <div class="input-container">
+                            <span class="input-icon">👤</span>
+                            {{ form.username }}
+                        </div>
+                        {% if form.username.help_text %}
+                        <p class="form-help-text">{{ form.username.help_text }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="id_email">* Correo electrónico</label>
+                        <div class="input-container">
+                            <span class="input-icon">📧</span>
+                            {{ form.email }}
+                        </div>
+                        {% if form.email.help_text %}
+                        <p class="form-help-text">{{ form.email.help_text }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- First Name -->
+                    <div class="form-group">
+                        <label for="id_first_name">Nombre</label>
+                        <div class="input-container">
+                            <span class="input-icon">👨</span>
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="form-group">
+                        <label for="id_last_name">Apellido</label>
+                        <div class="input-container">
+                            <span class="input-icon">📝</span>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+
+                    <!-- Password 1 -->
+                    <div class="form-group">
+                        <label for="id_password1">* Contraseña</label>
+                        <div class="input-container">
+                            <span class="input-icon">🔒</span>
+                            {{ form.password1 }}
+                        </div>
+                        
+                        <!-- Requisitos de contraseña con validación en tiempo real -->
+                        <div class="password-requirements">
+                            <h4>Requisitos de contraseña:</h4>
+                            <div class="requirement" id="req-length">
+                                <span class="requirement-icon">○</span>
+                                <span>Mínimo 8 caracteres</span>
+                            </div>
+                            <div class="requirement" id="req-uppercase">
+                                <span class="requirement-icon">○</span>
+                                <span>Al menos una letra mayúscula (A-Z)</span>
+                            </div>
+                            <div class="requirement" id="req-lowercase">
+                                <span class="requirement-icon">○</span>
+                                <span>Al menos una letra minúscula (a-z)</span>
+                            </div>
+                            <div class="requirement" id="req-number">
+                                <span class="requirement-icon">○</span>
+                                <span>Al menos un número (0-9)</span>
+                            </div>
+                            <div class="requirement" id="req-special">
+                                <span class="requirement-icon">○</span>
+                                <span>Al menos un caracter especial (!@#$%^&*...)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Password 2 -->
+                    <div class="form-group">
+                        <label for="id_password2">* Confirmar contraseña</label>
+                        <div class="input-container">
+                            <span class="input-icon">🔒</span>
+                            {{ form.password2 }}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="login-btn">Crear Cuenta</button>
+                    
+                    <div class="login-link">
+                        ¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="login-info">
+                <div class="info-card active">
+                    <h4>¿Por qué registrarse?</h4>
+                    <p>Al crear una cuenta en ImpulsaMente podrás:</p>
+                    <ul>
+                        <li>✓ Acceder a tutorías y terapias personalizadas</li>
+                        <li>✓ Hacer seguimiento de tu progreso</li>
+                        <li>✓ Gestionar tus citas y sesiones</li>
+                        <li>✓ Acceder a materiales y recursos exclusivos</li>
+                    </ul>
+                </div>
+                <div class="info-card" style="margin-top: 20px; background: #fff3cd; border-left: 4px solid #ffc107;">
+                    <h4>🔒 Seguridad</h4>
+                    <p>Tu contraseña debe ser segura para proteger tu cuenta. Asegúrate de cumplir con todos los requisitos.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer simplificado -->
+    <footer class="footer-simple">
+        <div class="container">
+            <p>&copy; 2025 ImpulsaMente. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Validación en tiempo real de requisitos de contraseña
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('id_password1');
+            
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function() {
+                    const password = this.value;
+                    
+                    // Validar longitud mínima
+                    validateRequirement('req-length', password.length >= 8);
+                    
+                    // Validar mayúscula
+                    validateRequirement('req-uppercase', /[A-Z]/.test(password));
+                    
+                    // Validar minúscula
+                    validateRequirement('req-lowercase', /[a-z]/.test(password));
+                    
+                    // Validar número
+                    validateRequirement('req-number', /\d/.test(password));
+                    
+                    // Validar caracter especial
+                    validateRequirement('req-special', /[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/;~`]/.test(password));
+                });
+            }
+            
+            function validateRequirement(elementId, isValid) {
+                const element = document.getElementById(elementId);
+                const icon = element.querySelector('.requirement-icon');
+                
+                if (isValid) {
+                    element.classList.add('valid');
+                    element.classList.remove('invalid');
+                    icon.textContent = '✓';
+                } else {
+                    element.classList.add('invalid');
+                    element.classList.remove('valid');
+                    icon.textContent = '○';
+                }
+            }
+        });
+    </script>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Plan Estudiante - ImpulsaMente{% endblock %}
+
+{% block nav_plan %}active{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+        <h1 class="section-title">Plan Estudiante — Planes y valores</h1>
+        <p style="color: #333; font-size: 1.1rem;">Ofrecemos planes diseñados para cubrir necesidades integrales de tutoría y terapia:</p>
+
+        <div class="plans-grid">
+            {% for price in prices %}
+            <div class="plan-card">
+                <img src="{% static 'images/student-basic.jpg' %}" alt="{{ price.plan }}" class="plan-image">
+                <h3>{{ price.plan }}</h3>
+                <span class="plan-price">${{ price.price|floatformat:0 }}</span>
+                <p>{{ price.description }}</p>
+                <a href="{% url 'solicitar_servicio' %}?service=plan-estudiante&plan={{ price.plan }}" class="card-btn">Solicitar</a>
+            </div>
+            {% empty %}
+            <p>No hay planes disponibles en este momento.</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/servicios.js' %}"></script>
+{% endblock %}

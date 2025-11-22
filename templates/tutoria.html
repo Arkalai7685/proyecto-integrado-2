@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tutoría - ImpulsaMente{% endblock %}
+
+{% block nav_tutoria %}active{% endblock %}
+
+{% block content %}
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h1 class="section-title">Tutoría — Planes y valores</h1>
+                </div>
+
+                <p>Ofrecemos planes diseñados para cubrir necesidades desde apoyo puntual hasta acompañamiento integral para la defensa de tesis.</p>
+
+                <div class="cards-grid" style="margin-top:24px;">
+                    {% for price in prices %}
+                    <div class="service-card">
+                        <div class="card-image"><img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=60" alt="{{ price.plan }}"></div>
+                        <div class="card-content">
+                            <h3 class="card-title">{{ price.plan }}</h3>
+                            <p class="card-price">${{ price.price|floatformat:0 }}</p>
+                            <p>{{ price.description }}</p>
+                            <a href="{% url 'solicitar_servicio' %}?service=tutoria&plan={{ price.plan }}" class="card-btn">Solicitar</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No hay planes disponibles en este momento.</p>
+                    {% endfor %}
+                </div>
+
+                <section style="margin-top:40px;">
+                    <h3>Qué incluye cada plan</h3>
+                    <ul>
+                        <li><strong>Sesiones síncronas</strong> (Zoom/Meet) con un tutor experto.</li>
+                        <li><strong>Revisión de documentos</strong> y retroalimentación por escrito.</li>
+                        <li><strong>Recursos adicionales</strong>: plantillas, guías metodológicas y checklists.</li>
+                        <li><strong>Soporte por correo</strong> entre sesiones para dudas puntuales.</li>
+                    </ul>
+                </section>
+            </div>
+        </section>
+{% endblock %}

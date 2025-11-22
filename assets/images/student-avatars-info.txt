@@ -1,0 +1,27 @@
+<!-- Placeholder Images for Students -->
+<!-- These are temporary image URLs for student avatars -->
+<!-- Replace with actual student photos as needed -->
+
+Student Avatars (via placeholder services):
+
+1. María García: https://ui-avatars.com/api/?name=Maria+Garcia&background=ff8c42&color=fff&size=80&rounded=true
+2. Carlos López: https://ui-avatars.com/api/?name=Carlos+Lopez&background=3498db&color=fff&size=80&rounded=true
+3. Ana Martínez: https://ui-avatars.com/api/?name=Ana+Martinez&background=e74c3c&color=fff&size=80&rounded=true
+4. Pedro Rodríguez: https://ui-avatars.com/api/?name=Pedro+Rodriguez&background=2ecc71&color=fff&size=80&rounded=true
+5. Laura Silva: https://ui-avatars.com/api/?name=Laura+Silva&background=9b59b6&color=fff&size=80&rounded=true
+6. Miguel Torres: https://ui-avatars.com/api/?name=Miguel+Torres&background=f39c12&color=fff&size=80&rounded=true
+7. Sofia Mendez: https://ui-avatars.com/api/?name=Sofia+Mendez&background=1abc9c&color=fff&size=80&rounded=true
+8. David Morales: https://ui-avatars.com/api/?name=David+Morales&background=34495e&color=fff&size=80&rounded=true
+
+Alternative using Robohash (robot/avatar style):
+- https://robohash.org/maria-garcia?size=80x80&set=set4
+- https://robohash.org/carlos-lopez?size=80x80&set=set4
+- https://robohash.org/ana-martinez?size=80x80&set=set4
+
+Alternative using DiceBear (modern avatars):
+- https://api.dicebear.com/7.x/avataaars/svg?seed=maria-garcia&size=80
+- https://api.dicebear.com/7.x/avataaars/svg?seed=carlos-lopez&size=80
+- https://api.dicebear.com/7.x/avataaars/svg?seed=ana-martinez&size=80
+
+Note: The empleado-dashboard.html already uses these UI-Avatars URLs for student avatars.
+These are external services that generate avatars automatically based on names and parameters.

@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - ImpulsaMente</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/Illustration.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+    <!-- Header simplificado -->
+    <header class="header-simple">
+        <div class="container">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <img src="{% static 'images/Illustration.png' %}" alt="impulsamente" class="logo-img" style="width:48px;height:48px;">
+                <span class="logo-text">ImpulsaMente</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;">
+                <a href="{% url 'index' %}" class="back-link">← Volver al inicio</a>
+                <a href="{% url 'solicitar_servicio' %}" class="nav-link" style="background:transparent;padding:8px 12px;border-radius:16px;color:#fffb;">PLAN ESTUDIANTE</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="login-main">
+        <div class="login-container">
+            <!-- Formulario de login -->
+            <div class="login-form-container">
+                <h2 id="loginTitle">Bienvenido a ImpulsaMente</h2>
+                <p id="loginSubtitle">Introduce tus credenciales para acceder a tu cuenta.</p>
+                
+                {% if pending_service %}
+                <div class="alert alert-info" style="padding:14px 16px;margin:15px 0;border-radius:10px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;box-shadow:0 4px 15px rgba(102, 126, 234, 0.3);">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <span style="font-size:24px;">🎯</span>
+                        <div>
+                            <strong style="font-size:15px;display:block;margin-bottom:4px;">Estás solicitando un servicio</strong>
+                            <span style="font-size:13px;opacity:0.95;">
+                                {% if pending_plan %}
+                                    {{ pending_service }} - Plan {{ pending_plan }}
+                                {% else %}
+                                    {{ pending_service }}
+                                {% endif %}
+                            </span>
+                            <div style="font-size:12px;margin-top:6px;opacity:0.9;">
+                                ✨ Inicia sesión o <a href="{% url 'register' %}" style="color:white;text-decoration:underline;">regístrate</a> para continuar
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <form id="loginForm" class="login-form" method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">* Usuario</label>
+                        <div class="input-container">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="username" name="username" required placeholder="Tu nombre de usuario">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">* Contraseña</label>
+                        <div class="input-container">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="password" name="password" required placeholder="Tu contraseña">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="login-btn">Iniciar Sesión</button>
+                    
+                    <div class="forgot-password">
+                        <a href="#" id="forgotPassword">¿Has olvidado tu contraseña?</a>
+                        <br>
+                        <a href="#" id="resetPassword">Restablecer contraseña</a>
+                    </div>
+                    
+                    <div class="login-link" style="text-align: center; margin-top: 20px; font-size: 14px;">
+                        ¿No tienes cuenta? <a href="{% url 'register' %}" style="color: #4a90e2; text-decoration: none; font-weight: 500;">Regístrate aquí</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="login-info">
+                <div class="info-card active">
+                    <h4>Sistema de Acceso Unificado</h4>
+                    <p>Serás redirigido automáticamente al panel correspondiente según tu tipo de cuenta.</p>
+                    <ul>
+                        <li>✓ Clientes: Acceso a sesiones y recursos</li>
+                        <li>✓ Empleados: Panel de gestión de pacientes</li>
+                        <li>✓ Administradores: Panel administrativo completo</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer simplificado -->
+    <footer class="footer-simple">
+        <div class="container">
+            <p>&copy; 2025 ImpulsaMente. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/login.js' %}"></script>
+</body>
+</html>

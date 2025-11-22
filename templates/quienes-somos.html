@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quienes Somos - ImpulsaMente{% endblock %}
+
+{% block nav_quienes %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/quienes-somos.css' %}">
+{% endblock %}
+
+{% block content %}
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <h1 class="hero-title">Quienes Somos</h1>
+                <p class="hero-subtitle">Conoce a nuestro equipo especializado en psicología y asesoría académica</p>
+            </div>
+        </section>
+
+        <!-- Asesorías Section -->
+        <section class="section bg-light">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">ASESORÍAS</h2>
+                </div>
+                
+                <div class="advisor-section">
+                    <div class="advisor-profile">
+                        <div class="advisor-image">
+                            <img src="{% static 'images/personal/YI9n915nzpk0ZHHk-20250525231319.png' %}" alt="Cote - Asesora" class="profile-img">
+                        </div>
+                        <div class="advisor-info">
+                            <div class="advisor-description">
+                                <p>Cote es una profesional que se dedica a la tutoría y mentoría de proyectos de tesis, con la misión de combatir el estancamiento y la deserción que a menudo sufren los estudiantes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Psychology Team Section -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">PSICOLOGÍA</h2>
+                    <p class="team-subtitle">El mejor equipo de psicólogos/as están esperando para ayudarte</p>
+                </div>
+                
+                <div class="psychology-team">
+                    <div class="psychologist">
+                        <div class="psychologist-image">
+                            <img src="{% static 'images/personal/Dominique-Carcamo.webp' %}" alt="Dominique Cárcamo" class="profile-img">
+                        </div>
+                        <h4 class="psychologist-name">Dominique Cárcamo</h4>
+                        <p class="psychologist-title">Psicóloga Clínica</p>
+                        <div class="psychologist-description">Especialista en terapia cognitivo-conductual y manejo de ansiedad académica.</div>
+                    </div>
+
+                    <div class="psychologist">
+                        <div class="psychologist-image">
+                            <img src="{% static 'images/personal/Francisco-Herrera.jpg' %}" alt="Francisco Herrera" class="profile-img">
+                        </div>
+                        <h4 class="psychologist-name">Francisco Herrera</h4>
+                        <p class="psychologist-title">Psicólogo Clínico</p>
+                        <div class="psychologist-description">Experto en procesos de duelo, estrés postraumático y acompañamiento en crisis.</div>
+                    </div>
+
+                    <div class="psychologist">
+                        <div class="psychologist-image">
+                            <img src="{% static 'images/personal/Josefa-Silva-Ayala.webp' %}" alt="Josefa Silva" class="profile-img">
+                        </div>
+                        <h4 class="psychologist-name">Josefa Silva</h4>
+                        <p class="psychologist-title">Psicóloga Clínica</p>
+                        <div class="psychologist-description">Especializada en desarrollo personal, autoestima y habilidades sociales.</div>
+                    </div>
+
+                    <div class="psychologist">
+                        <div class="psychologist-image">
+                            <img src="{% static 'images/personal/Roceling-Romero.webp' %}" alt="Roceling Romero" class="profile-img">
+                        </div>
+                        <h4 class="psychologist-name">Roceling Romero</h4>
+                        <p class="psychologist-title">Psicóloga Clínica</p>
+                        <div class="psychologist-description">Experta en terapia familiar sistémica y relaciones interpersonales.</div>
+                    </div>
+
+                    <div class="psychologist">
+                        <div class="psychologist-image">
+                            <img src="{% static 'images/personal/Maribel-Arenas-Celedon.webp' %}" alt="Maribel Arenas" class="profile-img">
+                        </div>
+                        <h4 class="psychologist-name">Maribel Arenas</h4>
+                        <p class="psychologist-title">Psicóloga Clínica</p>
+                        <div class="psychologist-description">Especialista en trastornos de ansiedad, depresión y adicciones.</div>
+                    </div>
+
+                    <div class="psychologist">
+                        <div class="psychologist-image">
+                            <img src="{% static 'images/personal/IMG_20250503_130113-scaled.webp' %}" alt="Paula Baeza" class="profile-img">
+                        </div>
+                        <h4 class="psychologist-name">Paula Baeza</h4>
+                        <p class="psychologist-title">Psicóloga Clínica</p>
+                        <div class="psychologist-description">Enfocada en salud mental perinatal, terapia de pareja y psicología infanto-juvenil.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission Section -->
+        <section class="section bg-light">
+            <div class="container">
+                <div class="mission-section">
+                    <div class="section-header">
+                        <h3 class="mission-title">Cuál es nuestro propósito</h3>
+                    </div>
+                    
+                    <div class="mission-content">
+                        <div class="mission-text">
+                            <div class="mission-highlight">
+                                <p>Existe un problema gigante y sistémico en el que estudiantes desertan y no se titulan por falta de apoyo. El Banco Mundial (2022) estima que en Latinoamérica solo el 50% se titula.</p>
+                                
+                                <p>Decidimos ser parte de la solución y todo lo que hace va en línea con ello. Durante tu progreso con nosotros trabajaremos en mejorar la formación de tu tesis junto con un apoyo psicológico, la terapia psicológica online se ha consolidado como una alternativa efectiva, cómoda y accesible para cuidar tu salud mental desde cualquier lugar, logrando mejorar tu progreso durante la resolución de tu tesis.</p>
+                                
+                                <p>Contamos con un equipo especializado que trabajan de forma ética, confidencial y cercana para ayudarte a superar dificultades emocionales, tomar decisiones importantes o simplemente mejorar tu bienestar.</p>
+                                
+                                <p>Hoy más que nunca, agendar una sesión con un psicólogo clínico en línea te permite recibir apoyo profesional sin barreras geográficas ni de tiempo, adaptándose a tu rutina y necesidades personales. Esto ha sido una gran fortaleza para tutorear y mentorear a quienes emprenden este proceso en el que, en promedio, la gente se demora al menos 1,5 años más de lo presupuestado.</p>
+                                
+                                <p>Estamos aquí porque apoyarte a titularte es nuestra misión... y que desarrolles tus habilidades de investigación, que mantengas una estabilidad mental y logres manejar situaciones de ansiedad y estrés un efecto colateral.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Values Section -->
+        <section class="section">
+            <div class="container">
+                <div class="values-section">
+                    <h3 class="values-title">Nuestros Valores</h3>
+                    <div class="values-grid">
+                        <div class="value-card">
+                            <div class="value-icon">🎯</div>
+                            <h4>Compromiso</h4>
+                            <p>Nos comprometemos con tu éxito académico y bienestar emocional durante todo el proceso.</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">🤝</div>
+                            <h4>Confianza</h4>
+                            <p>Creamos un ambiente seguro y confidencial donde puedes expresarte libremente.</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">💡</div>
+                            <h4>Innovación</h4>
+                            <p>Utilizamos metodologías actualizadas y tecnología para optimizar tu aprendizaje.</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">❤️</div>
+                            <h4>Empatía</h4>
+                            <p>Entendemos los desafíos que enfrentas y te acompañamos con comprensión y paciencia.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Toggle descripción al hacer clic en la imagen del psicólogo
+(function() {
+    'use strict';
+    
+    const psychologistImages = document.querySelectorAll('.psychologist-image');
+    
+    psychologistImages.forEach(function(image) {
+        image.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const psychologist = this.closest('.psychologist');
+            
+            // Cerrar todas las demás descripciones
+            document.querySelectorAll('.psychologist.active').forEach(function(p) {
+                if (p !== psychologist) {
+                    p.classList.remove('active');
+                }
+            });
+            
+            // Toggle la descripción actual
+            psychologist.classList.toggle('active');
+        });
+    });
+    
+    // Cerrar descripción al hacer clic fuera
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.psychologist')) {
+            document.querySelectorAll('.psychologist.active').forEach(function(p) {
+                p.classList.remove('active');
+            });
+        }
+    });
+})();
+</script>
+{% endblock %}

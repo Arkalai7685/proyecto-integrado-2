@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Solicitar Servicio - ImpulsaMente{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container" style="max-width: 800px;">
+            <h1 class="section-title">Solicitar Servicio</h1>
+            
+            {% if service and price %}
+            <div class="service-summary" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                <h2 style="margin-top: 0;">{{ service.name }}</h2>
+                <h3 style="color: #ff8c42; margin: 10px 0;">{{ price.plan }}</h3>
+                <p style="font-size: 1.5rem; font-weight: 600; color: #333;">${{ price.price|floatformat:0 }}</p>
+                <p>{{ price.description }}</p>
+            </div>
+            {% else %}
+            <div class="alert" style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 30px;">
+                <p>⚠️ No se ha seleccionado ningún servicio. Por favor, selecciona un plan desde nuestras páginas de servicios.</p>
+                <div style="margin-top: 15px;">
+                    <a href="{% url 'tutoria' %}" class="card-btn" style="margin-right: 10px;">Ver Tutoría</a>
+                    <a href="{% url 'terapia' %}" class="card-btn" style="margin-right: 10px;">Ver Terapia</a>
+                    <a href="{% url 'plan_estudiante' %}" class="card-btn">Ver Plan Estudiante</a>
+                </div>
+            </div>
+            {% endif %}
+
+            <form id="orderForm" style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="name" style="display: block; margin-bottom: 8px; font-weight: 600;">Nombre completo *</label>
+                    <input type="text" id="name" name="name" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="email" style="display: block; margin-bottom: 8px; font-weight: 600;">Correo electrónico *</label>
+                    <input type="email" id="email" name="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="phone" style="display: block; margin-bottom: 8px; font-weight: 600;">Teléfono</label>
+                    <input type="tel" id="phone" name="phone" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="message" style="display: block; margin-bottom: 8px; font-weight: 600;">Mensaje o comentarios adicionales</label>
+                    <textarea id="message" name="message" rows="4" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; resize: vertical;"></textarea>
+                </div>
+
+                <input type="hidden" id="service" name="service" value="{{ service_slug }}">
+                <input type="hidden" id="plan" name="plan" value="{{ plan_name }}">
+
+                <div id="messageContainer" style="margin-bottom: 20px; display: none;"></div>
+
+                <button type="submit" class="card-btn" style="width: 100%; padding: 15px; font-size: 1.1rem; background: #ff8c42; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    Enviar Solicitud
+                </button>
+            </form>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/servicios.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ImpulsaMente - Psicología y Tutoría{% endblock %}
+
+{% block nav_inicio %}active{% endblock %}
+
+{% block content %}
+        <!-- Featured Plans Section -->
+        <section id="featured-plans" class="section">
+            <div class="container">
+                <h2 class="section-title">Planes Destacados</h2>
+                <p>Ofrecemos planes diseñados para cubrir necesidades desde apoyo puntual hasta acompañamiento integral:</p>
+
+                <div class="plans-category">
+                    <h3 class="category-title">Planes de Tutoría</h3>
+                    <div class="plans-grid">
+                        {% for price in tutoria_prices %}
+                        <div class="plan-card">
+                            <img src="{% static 'images/tutoria-basic.jpg' %}" alt="{{ price.plan }}" class="plan-image">
+                            <h3>{{ price.plan }}</h3>
+                            <span class="plan-price">${{ price.price|floatformat:0 }}</span>
+                            <p>{{ price.description }}</p>
+                            <a href="{% url 'solicitar_servicio' %}?service=tutoria&plan={{ price.plan }}" class="card-btn">Solicitar</a>
+                        </div>
+                        {% empty %}
+                        <p>No hay planes disponibles en este momento.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="plans-category">
+                    <h3 class="category-title">Planes de Terapia</h3>
+                    <div class="plans-grid">
+                        {% for price in terapia_prices %}
+                        <div class="plan-card">
+                            <img src="{% static 'images/terapia-individual.jpg' %}" alt="{{ price.plan }}" class="plan-image">
+                            <h3>{{ price.plan }}</h3>
+                            <span class="plan-price">${{ price.price|floatformat:0 }}</span>
+                            <p>{{ price.description }}</p>
+                            <a href="{% url 'solicitar_servicio' %}?service=terapia&plan={{ price.plan }}" class="card-btn">Solicitar</a>
+                        </div>
+                        {% empty %}
+                        <p>No hay planes disponibles en este momento.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="plans-category">
+                    <h3 class="category-title">Planes de Estudiante</h3>
+                    <div class="plans-grid">
+                        <div class="plan-card">
+                            <img src="{% static 'images/student-basic.jpg' %}" alt="Plan Básico" class="plan-image">
+                            <h3>Plan Básico</h3>
+                            <span class="plan-price">$100.000</span>
+                            <p>Incluye tutoría y terapia para necesidades puntuales.</p>
+                            <a href="{% url 'solicitar_servicio' %}?service=plan-estudiante&plan=basico" class="card-btn">Solicitar</a>
+                        </div>
+                        <div class="plan-card">
+                            <img src="{% static 'images/student-advanced.jpg' %}" alt="Plan Avanzado" class="plan-image">
+                            <h3>Plan Avanzado</h3>
+                            <span class="plan-price">$250.000</span>
+                            <p>Un paquete completo para seguimiento continuo.</p>
+                            <a href="{% url 'solicitar_servicio' %}?service=plan-estudiante&plan=avanzado" class="card-btn">Solicitar</a>
+                        </div>
+                        <div class="plan-card">
+                            <img src="{% static 'images/student-premium.jpg' %}" alt="Plan Premium" class="plan-image">
+                            <h3>Plan Premium</h3>
+                            <span class="plan-price">$400.000</span>
+                            <p>Máximo apoyo con tutoría y terapia intensiva.</p>
+                            <a href="{% url 'solicitar_servicio' %}?service=plan-estudiante&plan=premium" class="card-btn">Solicitar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us Section -->
+        <section id="why-choose" class="section bg-light">
+            <div class="container">
+                <h2 class="section-title">Porque elegirnos?</h2>
+                <div class="why-choose-content">
+                    <div class="why-choose-text">
+                        <div class="highlight-box">
+                            <p>Nuestro equipo de psicólogos y asesores, estamos dedicados a acompañarte en tu viaje hacia el equilibrio y el bienestar, proporcionarte ayuda para el buen desarrollo de tu tesis. Sabemos que ser estudiante es difícil, por eso te ofrecemos un enfoque personalizado que se adapta a tus necesidades y objetivos.</p>
+                        </div>
+                    </div>
+                    <div class="why-choose-image">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Graduación">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- What We Do Different Section -->
+        <section id="different" class="section">
+            <div class="container">
+                <div class="different-content">
+                    <div class="different-text">
+                        <h2 class="different-title">Lo que hacemos diferente</h2>
+                        <div class="different-features">
+                            <div class="feature">
+                                <span class="feature-icon">✓</span>
+                                <div class="feature-content">
+                                    <h4>Acompañamiento personalizado:</h4>
+                                    <p>Nos adaptamos a tu ritmo, tus necesidades y tu proyecto. Aquí no hay juicios, solo progreso.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature">
+                                <span class="feature-icon">✓</span>
+                                <div class="feature-content">
+                                    <h4>Metodologías actualizadas:</h4>
+                                    <p>Contamos con formación certificada en metodología cualitativa y cuantitativa, para entregar un acompañamiento con rigor académico y claridad didáctica.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature">
+                                <span class="feature-icon">✓</span>
+                                <div class="feature-content">
+                                    <h4>Supervisión profesional y humana:</h4>
+                                    <p>No solo orientamos, sino que motivamos y animamos a cada persona a creer en sus capacidades y avanzar con seguridad.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature">
+                                <span class="feature-icon">✓</span>
+                                <div class="feature-content">
+                                    <h4>Retroalimentación orientada a la mejora:</h4>
+                                    <p>No decimos "esto está mal" y seguimos. Explicamos, corregimos, proponemos y enseñamos.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature">
+                                <span class="feature-icon">✓</span>
+                                <div class="feature-content">
+                                    <h4>Terapia personalizada:</h4>
+                                    <p>potencia tu bienestar emocional, ayudándote a superar desafíos y alcanzar una vida plena y equilibrada</p>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="different-image">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mujer trabajando">
+                    </div>
+                </div>
+            </div>
+        </section>
+{% endblock %}

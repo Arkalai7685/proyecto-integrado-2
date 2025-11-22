@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Terapia - ImpulsaMente{% endblock %}
+
+{% block nav_terapia %}active{% endblock %}
+
+{% block content %}
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h1 class="section-title">Terapia — Planes y valores</h1>
+                </div>
+
+                <p>Servicios de atención psicológica con distintos enfoques y paquetes para acompañar tu proceso personal y académico.</p>
+
+                <div class="cards-grid" style="margin-top:24px;">
+                    {% for price in prices %}
+                    <div class="service-card">
+                        <div class="card-image"><img src="https://images.unsplash.com/photo-1509099836639-18ba73b3f75b?auto=format&fit=crop&w=800&q=60" alt="{{ price.plan }}"></div>
+                        <div class="card-content">
+                            <h3 class="card-title">{{ price.plan }}</h3>
+                            <p class="card-price">${{ price.price|floatformat:0 }}</p>
+                            <p>{{ price.description }}</p>
+                            <a href="{% url 'solicitar_servicio' %}?service=terapia&plan={{ price.plan }}" class="card-btn">Solicitar</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No hay planes disponibles en este momento.</p>
+                    {% endfor %}
+                </div>
+
+                <section style="margin-top:40px;">
+                    <h3>Enfoques disponibles</h3>
+                    <ul>
+                        <li>Terapia Cognitivo-Conductual (TCC)</li>
+                        <li>Terapia Sistémica / Familiar</li>
+                        <li>Terapia centrada en la persona</li>
+                        <li>Intervenciones breves focalizadas en la gestión de estrés académico</li>
+                    </ul>
+                </section>
+            </div>
+        </section>
+{% endblock %}

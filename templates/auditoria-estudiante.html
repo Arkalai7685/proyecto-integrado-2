@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Auditoría de Estudiante - ImpulsaMente{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auditoria-estudiante.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Back Button -->
+        <div class="back-section">
+            <button onclick="window.history.back()" class="back-btn">
+                ← Volver al Dashboard
+            </button>
+        </div>
+
+        <!-- Student Info Section -->
+        <div class="student-info-section">
+            {% if client %}
+            <div class="student-header">
+                <img src="https://ui-avatars.com/api/?name={{ client.first_name|default:client.username|urlencode }}+{{ client.last_name|default:''|urlencode }}&background=667eea&color=fff&size=120&rounded=true" alt="{{ client.get_full_name|default:client.username }}" class="student-avatar-large">
+                <div class="student-details">
+                    <h1>{{ client.get_full_name|default:client.username }}</h1>
+                    <div class="student-meta">
+                        <span class="meta-item">{{ client.email }}</span>
+                        {% if main_assignment %}
+                        <span class="meta-item">{{ main_assignment.service.name }}</span>
+                        <span class="meta-item">Iniciado: {{ main_assignment.assigned_date|date:"d M Y" }}</span>
+                        {% endif %}
+                        <span class="meta-item">Usuario desde: {{ client.date_joined|date:"d M Y" }}</span>
+                    </div>
+                    <div class="progress-overview">
+                        <div class="progress-label">
+                            <span>Progreso de Sesiones</span>
+                            <span class="progress-percent">{{ progress }}%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" data-progress="{{ progress }}" style="width: {{ progress }}%;"></div>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 14px; color: #666;">
+                            📅 Sesiones completadas: {{ completed_sessions }}/{{ total_sessions }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="student-header">
+                <div class="student-details">
+                    <h1>No se ha seleccionado un cliente</h1>
+                    <p style="color: #666; margin-top: 10px;">Por favor, selecciona un cliente desde el dashboard para ver su auditoría.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="estudiante">SESIONES</button>
+                <button class="tab-btn" data-tab="datos">DATOS</button>
+                <button class="tab-btn" data-tab="mensajes">AUDITORÍA</button>
+            </div>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tabs-content">
+            <!-- Estudiante Tab -->
+            <div id="estudiante-tab" class="tab-content active">
+                <div class="content-grid">
+                    <!-- Sesiones Section -->
+                    <div class="material-section">
+                        <div class="section-header">
+                            <h3>Historial de Sesiones</h3>
+                        </div>
+                        
+                        <div class="materials-grid">
+                            {% if sessions %}
+                                {% for session in sessions %}
+                                <div class="material-item {% if session.status == 'completed' %}completed{% elif session.status == 'cancelled' %}overdue{% else %}pending{% endif %}" data-status="{{ session.status }}" data-session-id="{{ session.id }}">
+                                    <div class="material-icon">
+                                        {% if session.status == 'completed' %}✅
+                                        {% elif session.status == 'cancelled' %}❌
+                                        {% elif session.status == 'scheduled' %}📅
+                                        {% elif session.status == 'confirmed' %}✔️
+                                        {% else %}⏳{% endif %}
+                                    </div>
+                                    <div class="material-info">
+                                        <h4>{{ session.assignment.service.name }} - Sesión</h4>
+                                        <p>
+                                            {% if session.status == 'completed' %}Completado el 
+                                            {% elif session.status == 'cancelled' %}Cancelado el 
+                                            {% else %}Programado para el {% endif %}
+                                            {{ session.scheduled_date|date:"d M Y" }}
+                                        </p>
+                                        <p style="font-size: 12px; color: #999; margin-top: 5px;">
+                                            Con: {{ session.assignment.employee.get_full_name|default:session.assignment.employee.username }}
+                                        </p>
+                                        {% if session.notes %}
+                                        <p style="font-size: 12px; color: #666; margin-top: 5px; font-style: italic;">
+                                            "{{ session.notes|truncatewords:15 }}"
+                                        </p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="status-indicator 
+                                        {% if session.status == 'completed' %}completed-status
+                                        {% elif session.status == 'cancelled' %}overdue-status
+                                        {% else %}pending-status{% endif %}">
+                                        {% if session.status == 'completed' %}✓
+                                        {% elif session.status == 'cancelled' %}⚠️
+                                        {% else %}⏳{% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div style="grid-column: 1/-1; text-align: center; padding: 40px 20px;">
+                                    <div style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;">📅</div>
+                                    <h3 style="color: #666; margin-bottom: 8px;">No hay sesiones registradas</h3>
+                                    <p style="color: #999;">Las sesiones aparecerán aquí cuando se programen.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Statistics -->
+                        <div class="material-stats">
+                            <div class="stat-card completed">
+                                <div class="stat-number">{{ sessions|length|default:0 }}</div>
+                                <div class="stat-label">Total Sesiones</div>
+                            </div>
+                            <div class="stat-card completed">
+                                <div class="stat-number">{{ completed_sessions|default:0 }}</div>
+                                <div class="stat-label">Completadas</div>
+                            </div>
+                            <div class="stat-card pending">
+                                <div class="stat-number">{% for s in sessions %}{% if s.status == 'scheduled' or s.status == 'confirmed' %}1{% endif %}{% endfor %}</div>
+                                <div class="stat-label">Programadas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos Tab -->
+            <div id="datos-tab" class="tab-content">
+                <div class="datos-content">
+                    <div class="info-cards">
+                        {% if client %}
+                        <div class="info-card">
+                            <h4>Información Personal</h4>
+                            <div class="info-row">
+                                <span class="info-label">Email:</span>
+                                <span class="info-value">{{ client.email }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Nombre de usuario:</span>
+                                <span class="info-value">{{ client.username }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Nombre completo:</span>
+                                <span class="info-value">{{ client.get_full_name|default:"No especificado" }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Fecha de registro:</span>
+                                <span class="info-value">{{ client.date_joined|date:"d M Y" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h4>Servicios Activos</h4>
+                            {% for assignment in assignments %}
+                            <div class="info-row">
+                                <span class="info-label">{{ assignment.service.name }}:</span>
+                                <span class="info-value">Con {{ assignment.employee.get_full_name|default:assignment.employee.username }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Inicio:</span>
+                                <span class="info-value">{{ assignment.assigned_date|date:"d M Y" }}</span>
+                            </div>
+                            {% empty %}
+                            <div class="info-row">
+                                <span class="info-value">No hay servicios activos</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="info-card">
+                            <h4>Archivos Compartidos</h4>
+                            {% if files %}
+                                {% for file in files|slice:":5" %}
+                                <div class="info-row">
+                                    <span class="info-label">📎 {{ file.uploaded_at|date:"d M Y" }}:</span>
+                                    <span class="info-value">{{ file.file.name|default:"Archivo" }}</span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="info-row">
+                                    <span class="info-value">No hay archivos compartidos</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <div class="info-card">
+                            <h4>No hay información disponible</h4>
+                            <p style="color: #666; margin-top: 10px;">Selecciona un cliente para ver sus datos.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensajes Tab -->
+            <div id="mensajes-tab" class="tab-content">
+                <div class="mensajes-content">
+                    <div class="mensajes-header">
+                        <h3>Historial de Actividad (Auditoría)</h3>
+                    </div>
+
+                    <div class="mensajes-container">
+                        {% if audit_logs %}
+                            {% for log in audit_logs %}
+                            <!-- Log de auditoría -->
+                            <div class="mensaje sistema-mensaje">
+                                <div class="mensaje-content">
+                                    <div class="sistema-icon">
+                                        {% if log.action == 'create' %}➕
+                                        {% elif log.action == 'update' %}✏️
+                                        {% elif log.action == 'delete' %}🗑️
+                                        {% elif log.action == 'login' %}🔑
+                                        {% elif log.action == 'logout' %}🚪
+                                        {% elif log.action == 'view' %}👁️
+                                        {% else %}📝{% endif %}
+                                    </div>
+                                    <div class="sistema-texto">
+                                        <strong>{{ log.user.get_full_name|default:log.user.username }}</strong>
+                                        - {{ log.action|upper }}: {{ log.model_name }}
+                                        {% if log.description %}
+                                        <br><span style="color: #666; font-size: 13px;">{{ log.description }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="sistema-fecha">{{ log.timestamp|date:"d M Y H:i" }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div style="text-align: center; padding: 40px 20px;">
+                                <div style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;">📋</div>
+                                <h3 style="color: #666; margin-bottom: 8px;">No hay actividad registrada</h3>
+                                <p style="color: #999;">Los logs de auditoría aparecerán aquí cuando se realicen acciones.</p>
+                            </div>
+                        {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para agregar material -->
+    <div id="addMaterialModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Agregar Nuevo Material</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addMaterialForm">
+                    <div class="form-group">
+                        <label for="materialTitle">Título del Material</label>
+                        <input type="text" id="materialTitle" name="materialTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="materialType">Tipo de Material</label>
+                        <select id="materialType" name="materialType" required>
+                            <option value="">Seleccionar tipo</option>
+                            <option value="�">Documento</option>
+                            <option value="�">Libro/Capítulo</option>
+                            <option value="�">Análisis</option>
+                            <option value="�">Investigación</option>
+                            <option value="�">Tarea</option>
+                            <option value="�">Redacción</option>
+                            <option value="📂">Objetivo</option>
+                            <option value="�">Formato</option>
+                            <option value="📂">Preparación</option>
+                            <option value="�">Presentación</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="materialDeadline">Fecha Límite</label>
+                        <input type="date" id="materialDeadline" name="materialDeadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="materialDescription">Descripción (opcional)</label>
+                        <textarea id="materialDescription" name="materialDescription" rows="3"></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="cancel-btn">Cancelar</button>
+                        <button type="submit" class="add-btn">Agregar Material</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/auditoria-estudiante.js' %}?v=4.0"></script>
+{% endblock %}

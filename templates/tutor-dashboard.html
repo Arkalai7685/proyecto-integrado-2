@@ -1,0 +1,547 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Panel Tutor - ImpulsaMente{% endblock %}
+
+{% block body_class %}tutor-dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/tutor-dashboard.css' %}?v=3.0">
+{% endblock %}
+
+{% block content %}
+    <main class="dashboard-main">
+        <div class="container">
+            <!-- Tabs Navigation -->
+            <div class="tabs-navigation">
+                <button class="tab-btn active" data-tab="estudiantes">ESTUDIANTES</button>
+                <button class="tab-btn" data-tab="solicitudes">SOLICITUDES</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content-wrapper">
+                <!-- Estudiantes Tab -->
+                <div class="tab-content active" id="estudiantes-tab">
+                    <div class="estudiantes-grid">
+                        {% if clients_data %}
+                            {% for client_info in clients_data %}
+                            <!-- Client Card -->
+                            <div class="student-card">
+                                <div class="student-avatar">
+                                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 36px; font-weight: bold;">
+                                        {{ client_info.client.first_name|first|default:client_info.client.username|first|upper }}
+                                    </div>
+                                </div>
+                                <div class="student-info">
+                                    <div class="student-badges">
+                                        <span class="badge estudiante-badge">CLIENTE</span>
+                                        <span class="badge datos-badge">{{ client_info.service.name|upper }}</span>
+                                    </div>
+                                    <div class="student-name" style="margin: 10px 0; font-weight: 600; font-size: 16px;">
+                                        {% if client_info.client.first_name %}
+                                            {{ client_info.client.first_name }} {{ client_info.client.last_name }}
+                                        {% else %}
+                                            {{ client_info.client.username }}
+                                        {% endif %}
+                                    </div>
+                                    <div style="font-size: 13px; color: #666; margin-bottom: 10px;">
+                                        {{ client_info.client.email }}
+                                    </div>
+                                    <div style="font-size: 12px; color: #999; margin-bottom: 10px;">
+                                        📅 Sesiones: {{ client_info.completed_sessions }}/{{ client_info.total_sessions }}
+                                    </div>
+                                    <div class="progress-section">
+                                        <div class="progress-header">
+                                            <span class="progress-label">PROGRESO</span>
+                                            <div class="action-buttons">
+                                                <button class="ver-btn" onclick="verDetalleCliente({{ client_info.client.id }})">VER</button>
+                                                <button class="auditoria-btn" onclick="window.location.href='{% url 'auditoria_estudiante' %}?client={{ client_info.client.id }}'">AUDITORÍA</button>
+                                            </div>
+                                        </div>
+                                        <div class="progress-bar-container">
+                                            <div class="progress-bar-bg">
+                                                <div class="progress-bar" data-progress="{{ client_info.progress }}" style="width: {{ client_info.progress }}%;"></div>
+                                            </div>
+                                            <span style="font-size: 12px; color: #667eea; font-weight: 600; margin-top: 5px;">{{ client_info.progress }}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <!-- Mensaje cuando no hay clientes asignados -->
+                            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+                                <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;">👥</div>
+                                <h3 style="color: #666; margin-bottom: 10px;">No tienes clientes asignados</h3>
+                                <p style="color: #999;">Cuando se te asignen clientes, aparecerán aquí con su información y progreso.</p>
+                            </div>
+                        {% endif %}
+
+                        <!-- Student Card 4 -->
+                        <div class="student-card">
+                            <div class="student-avatar">
+                                <img src="{% static 'images/personal/rubio.png' %}" alt="Pedro Rodríguez" class="avatar-img">
+                            </div>
+                            <div class="student-info">
+                                <div class="student-badges">
+                                    <span class="badge estudiante-badge">ESTUDIANTE</span>
+                                    <span class="badge datos-badge">DATOS</span>
+                                </div>
+                                <div class="progress-section">
+                                    <div class="progress-header">
+                                        <span class="progress-label">PROGRESO DE TESIS</span>
+                                        <button class="ver-btn">VER</button>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-bg">
+                                            <div class="progress-bar" data-progress="60"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Solicitudes Tab -->
+                <div class="tab-content" id="solicitudes-tab">
+                    <div class="solicitudes-container">
+                        <div class="solicitudes-header">
+                            <h3>Nuevas Solicitudes de Asesoría</h3>
+                            <span class="solicitudes-count">4 pendientes</span>
+                        </div>
+                        
+                        <div class="solicitudes-list">
+                            <div class="solicitud-item">
+                                <div class="solicitud-info">
+                                    <div class="solicitud-avatar">
+                                        <img src="{% static 'images/personal/student5.jpg' %}" alt="Laura Silva">
+                                    </div>
+                                    <div class="solicitud-details">
+                                        <h4>Laura Silva</h4>
+                                        <p>Necesita ayuda con metodología de investigación</p>
+                                        <span class="solicitud-time">Hace 2 horas</span>
+                                    </div>
+                                </div>
+                                <div class="solicitud-actions">
+                                    <button class="accept-btn">Aceptar</button>
+                                    <button class="decline-btn">Rechazar</button>
+                                </div>
+                            </div>
+
+                            <div class="solicitud-item">
+                                <div class="solicitud-info">
+                                    <div class="solicitud-avatar">
+                                        <img src="{% static 'images/personal/student6.jpg' %}" alt="Miguel Torres">
+                                    </div>
+                                    <div class="solicitud-details">
+                                        <h4>Miguel Torres</h4>
+                                        <p>Revisión de marco teórico y referencias bibliográficas</p>
+                                        <span class="solicitud-time">Hace 5 horas</span>
+                                    </div>
+                                </div>
+                                <div class="solicitud-actions">
+                                    <button class="accept-btn">Aceptar</button>
+                                    <button class="decline-btn">Rechazar</button>
+                                </div>
+                            </div>
+
+                            <div class="solicitud-item">
+                                <div class="solicitud-info">
+                                    <div class="solicitud-avatar">
+                                        <img src="{% static 'images/personal/student7.jpg' %}" alt="Sofia Mendez">
+                                    </div>
+                                    <div class="solicitud-details">
+                                        <h4>Sofia Mendez</h4>
+                                        <p>Apoyo en análisis de datos cuantitativos</p>
+                                        <span class="solicitud-time">Ayer</span>
+                                    </div>
+                                </div>
+                                <div class="solicitud-actions">
+                                    <button class="accept-btn">Aceptar</button>
+                                    <button class="decline-btn">Rechazar</button>
+                                </div>
+                            </div>
+
+                            <div class="solicitud-item">
+                                <div class="solicitud-info">
+                                    <div class="solicitud-avatar">
+                                        <img src="{% static 'images/personal/student8.jpg' %}" alt="Roberto Herrera">
+                                    </div>
+                                    <div class="solicitud-details">
+                                        <h4>Roberto Herrera</h4>
+                                        <p>Preparación para defensa de tesis</p>
+                                        <span class="solicitud-time">Hace 2 días</span>
+                                    </div>
+                                </div>
+                                <div class="solicitud-actions">
+                                    <button class="accept-btn">Aceptar</button>
+                                    <button class="decline-btn">Rechazar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Folders Section -->
+                <section class="folders-section">
+                    <div class="folders-grid">
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Plantillas</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Recursos</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Evaluaciones</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Reportes</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Metodologías</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Formatos</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Cronogramas</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Bibliografía</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Ejemplos</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Normas APA</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Instrumentos</span>
+                        </div>
+                        <div class="folder-item">
+                            <div class="folder-icon">📁</div>
+                            <span>Estadísticas</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Calendar Section -->
+                <section class="calendar-section">
+                    <div class="calendar-header">
+                        <h3>Agenda de Citas</h3>
+                        <div class="calendar-controls">
+                            <select class="month-select">
+                                <option value="9">octubre</option>
+                                <option value="10">noviembre</option>
+                                <option value="11">diciembre</option>
+                            </select>
+                            <select class="year-select">
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                            </select>
+                            <button class="calendar-nav" data-dir="prev">‹</button>
+                            <button class="calendar-nav" data-dir="next">›</button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-location">América/Santiago</div>
+                    
+                    <div class="calendar-grid">
+                        <div class="calendar-header-days">
+                            <div>lun</div>
+                            <div>mar</div>
+                            <div>mié</div>
+                            <div>jue</div>
+                            <div>vie</div>
+                            <div>sáb</div>
+                            <div>dom</div>
+                        </div>
+                        <div class="calendar-days" id="calendarDays">
+                            <!-- Days will be generated by JavaScript -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-info">
+                        <h4>{{ total_clients|default:0 }}</h4>
+                        <p>Clientes Activos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-info">
+                        <h4>{% if clients_data %}{{ clients_data|length }}{% else %}0{% endif %}</h4>
+                        <p>Con Sesiones</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-info">
+                        <h4>{% if clients_data %}{% for c in clients_data %}{{ c.completed_sessions|add:0 }}{% if not forloop.last %}+{% endif %}{% endfor %}{% else %}0{% endif %}</h4>
+                        <p>Sesiones Completadas</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-info">
+                        <h4>8</h4>
+                        <p>Citas Esta Semana</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Detalles del Cliente -->
+    <div id="clientModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6);">
+        <div class="modal-content" style="background-color: #fefefe; margin: 5% auto; padding: 0; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); animation: slideDown 0.3s ease;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px 12px 0 0; position: relative;">
+                <h2 id="modalClientName" style="margin: 0; font-size: 24px; font-weight: 600;">Detalles del Cliente</h2>
+                <button onclick="closeModal()" style="position: absolute; right: 20px; top: 20px; background: rgba(255,255,255,0.2); border: none; color: white; font-size: 28px; font-weight: bold; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.3s;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div id="modalContent">
+                    <div style="text-align: center; padding: 40px 0;">
+                        <div style="font-size: 48px; animation: spin 1s linear infinite;">⏳</div>
+                        <p style="color: #666; margin-top: 15px;">Cargando información...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px 30px; background: #f8f9fa; border-radius: 0 0 12px 12px; text-align: center;">
+                <button onclick="closeModal()" style="background: #667eea; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .modal-content button:hover {
+            background: rgba(255,255,255,0.3) !important;
+        }
+        .modal-footer button:hover {
+            background: #5568d3 !important;
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tutor-dashboard.js' %}?v=4.0"></script>
+<script>
+// FORZAR actualización de barras de progreso al cargar la página
+window.addEventListener('load', function() {
+    const progressBars = document.querySelectorAll('.student-card .progress-bar');
+    progressBars.forEach((bar) => {
+        const correctProgress = bar.getAttribute('data-progress');
+        if (correctProgress) {
+            bar.style.setProperty('width', correctProgress + '%', 'important');
+        }
+    });
+});
+
+function verDetalleCliente(clientId) {
+    document.getElementById('clientModal').style.display = 'block';
+    
+    fetch(`/api/client/${clientId}/details/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('modalClientName').textContent = `Detalles de ${data.client.name}`;
+                
+                let lastSessionText = 'No hay sesiones registradas';
+                if (data.last_session_days !== null) {
+                    if (data.last_session_days === 0) {
+                        lastSessionText = 'Hoy';
+                    } else if (data.last_session_days === 1) {
+                        lastSessionText = 'Hace 1 día';
+                    } else {
+                        lastSessionText = `Hace ${data.last_session_days} días`;
+                    }
+                }
+                
+                const modalContent = `
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 36px; font-weight: bold;">
+                            ${data.client.name.charAt(0).toUpperCase()}
+                        </div>
+                        <h3 style="margin: 0; font-size: 20px; color: #333;">${data.client.name}</h3>
+                        <p style="color: #666; font-size: 14px; margin: 5px 0 0 0;">${data.client.email}</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-weight: 600; color: #333;">Progreso actual:</span>
+                            <span style="font-size: 18px; font-weight: bold; color: #667eea;">${data.progress}%</span>
+                        </div>
+                        <div style="background: #e9ecef; height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); height: 100%; width: ${data.progress}%; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; gap: 15px;">
+                        <div style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                            <span style="font-size: 24px; margin-right: 12px;">📅</span>
+                            <div>
+                                <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Última sesión:</div>
+                                <div style="font-weight: 600; color: #333;">${lastSessionText}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                            <span style="font-size: 24px; margin-right: 12px;">🗓️</span>
+                            <div>
+                                <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Próxima cita:</div>
+                                <div style="font-weight: 600; color: #333;">${data.next_appointment || 'No programada'}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                            <span style="font-size: 24px; margin-right: 12px;">📊</span>
+                            <div>
+                                <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Estado:</div>
+                                <div style="font-weight: 600; color: ${data.status === 'Activo' ? '#28a745' : '#dc3545'};">${data.status}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                            <span style="font-size: 24px; margin-right: 12px;">✅</span>
+                            <div>
+                                <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Sesiones completadas:</div>
+                                <div style="font-weight: 600; color: #333;">${data.completed_sessions} de ${data.total_sessions}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('modalContent').innerHTML = modalContent;
+            } else {
+                document.getElementById('modalContent').innerHTML = `
+                    <div style="text-align: center; padding: 40px 0; color: #dc3545;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">❌</div>
+                        <p>Error al cargar los datos del cliente</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('modalContent').innerHTML = `
+                <div style="text-align: center; padding: 40px 0; color: #dc3545;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">❌</div>
+                    <p>Error de conexión. Por favor, intenta de nuevo.</p>
+                </div>
+            `;
+        });
+}
+
+function closeModal() {
+    document.getElementById('clientModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('clientModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
+// EJECUTAR INMEDIATAMENTE al final del documento para establecer barras de progreso
+(function() {
+    console.log('Iniciando configuración de barras de progreso...');
+    const progressBars = document.querySelectorAll('.student-card .progress-bar');
+    console.log(`Encontradas ${progressBars.length} barras de progreso`);
+    
+    progressBars.forEach((bar, index) => {
+        const progress = bar.getAttribute('data-progress');
+        console.log(`Barra ${index}: progress=${progress}`);
+        if (progress) {
+            bar.style.setProperty('width', progress + '%', 'important');
+            console.log(`Barra ${index} configurada a ${progress}%`);
+        }
+    });
+    
+    // Función para actualizar datos de un cliente específico
+    window.updateClientData = function(clientId) {
+        console.log('Actualizando cliente:', clientId);
+        fetch(`/api/client/${clientId}/details/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Datos recibidos:', data);
+                    // Buscar la tarjeta del cliente
+                    const cards = document.querySelectorAll('.student-card');
+                    cards.forEach(card => {
+                        const verBtn = card.querySelector('[onclick*="verDetalleCliente"]');
+                        if (verBtn) {
+                            const onclickStr = verBtn.getAttribute('onclick');
+                            const match = onclickStr.match(/verDetalleCliente\((\d+)\)/);
+                            if (match && match[1] == clientId) {
+                                console.log('Tarjeta encontrada, actualizando...');
+                                // Actualizar progreso
+                                const progressBar = card.querySelector('.progress-bar');
+                                const progressSpans = card.querySelectorAll('.progress-section span');
+                                const progressText = progressSpans[progressSpans.length - 1];
+                                
+                                if (progressBar) {
+                                    progressBar.setAttribute('data-progress', data.progress);
+                                    progressBar.style.setProperty('width', data.progress + '%', 'important');
+                                    console.log('Barra actualizada a', data.progress + '%');
+                                }
+                                if (progressText) {
+                                    progressText.textContent = data.progress + '%';
+                                }
+                                
+                                // Actualizar sesiones - buscar por el emoji de calendario
+                                const allDivs = card.querySelectorAll('div');
+                                allDivs.forEach(div => {
+                                    if (div.textContent.includes('📅 Sesiones:')) {
+                                        div.innerHTML = `📅 Sesiones: ${data.completed_sessions}/${data.total_sessions}`;
+                                        console.log('Sesiones actualizadas');
+                                    }
+                                });
+                                
+                                console.log(`Cliente ${clientId} actualizado: ${data.progress}%`);
+                            }
+                        }
+                    });
+                }
+            })
+            .catch(err => console.error('Error actualizando cliente:', err));
+    };
+    
+    // Verificar si hay un cliente que necesita actualizarse
+    const clientUpdated = localStorage.getItem('clientUpdated');
+    if (clientUpdated) {
+        console.log('Cliente marcado para actualizar:', clientUpdated);
+        localStorage.removeItem('clientUpdated');
+        setTimeout(() => window.updateClientData(clientUpdated), 500);
+    }
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,400 @@
+/* Logo specific styles for this page */
+.header .logo-img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: white;
+    padding: 3px;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.header .logo-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Quienes Somos - Estilos específicos */
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+    color: white;
+    padding: 120px 0 80px;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    font-weight: 400;
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.9;
+}
+
+/* Advisor Section Enhanced */
+.advisor-section {
+    margin: 60px auto;
+    max-width: 800px;
+}
+
+.advisor-profile {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+    align-items: center;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.advisor-image {
+    width: 200px;
+    height: 200px;
+}
+
+.advisor-image .profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 6px solid #ff8c42;
+    box-shadow: 0 8px 20px rgba(255, 140, 66, 0.3);
+}
+
+.advisor-description {
+    background: #34495e;
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    position: relative;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.advisor-description::before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-right: 15px solid #34495e;
+}
+
+/* Psychology Team Enhanced */
+.psychology-team {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+    margin-top: 50px;
+    justify-items: center;
+    align-items: start;
+}
+
+.psychologist {
+    text-align: center;
+    background: white;
+    padding: 30px 20px 20px 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    max-width: 250px;
+    position: relative;
+}
+
+.psychologist:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.psychologist-image {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    position: relative;
+    cursor: pointer;
+}
+
+.psychologist-description {
+    display: none !important;
+    background: #2c3e50;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.psychologist.active .psychologist-description {
+    display: block !important;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.psychologist-image {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    position: relative;
+}
+
+.psychologist-image .profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #ff8c42;
+    transition: border-color 0.3s ease;
+}
+
+.psychologist:hover .profile-img {
+    border-color: #ff6b35;
+}
+
+/* Placeholder for missing images */
+.placeholder-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    border: 4px solid #ff8c42;
+}
+
+.psychologist:hover .placeholder-img {
+    border-color: #ff6b35;
+}
+
+.psychologist-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.psychologist-title {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Mission Section Enhanced */
+.mission-section {
+    margin: 60px auto;
+    max-width: 1000px;
+}
+
+.mission-title {
+    color: #34495e;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.mission-highlight {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 20px;
+    line-height: 1.8;
+    box-shadow: 0 10px 30px rgba(52, 152, 219, 0.2);
+}
+
+.mission-highlight p {
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+.mission-highlight p:last-child {
+    margin-bottom: 0;
+}
+
+/* Values Section */
+.values-section {
+    margin: 80px auto;
+    text-align: center;
+}
+
+.values-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 50px;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.value-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.value-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.value-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.value-card h4 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.value-card p {
+    font-size: 14px;
+    color: #34495e;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Team subtitle enhanced */
+.team-subtitle {
+    text-align: center;
+    color: #34495e;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 50px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 36px;
+    }
+    
+    .hero-subtitle {
+        font-size: 18px;
+    }
+    
+    .advisor-profile {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 30px;
+        padding: 30px;
+    }
+    
+    .advisor-image {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+    }
+    
+    .advisor-description::before {
+        display: none;
+    }
+    
+    .psychology-team {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 30px;
+    }
+    
+    .psychologist {
+        padding: 25px 15px;
+    }
+    
+    .psychologist-image {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .values-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .mission-highlight {
+        padding: 30px;
+    }
+    
+    .mission-title, .values-title {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section {
+        padding: 100px 0 60px;
+    }
+    
+    .hero-title {
+        font-size: 28px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+    }
+    
+    .advisor-profile {
+        padding: 20px;
+    }
+    
+    .advisor-description {
+        padding: 20px;
+        font-size: 14px;
+    }
+    
+    .mission-highlight {
+        padding: 25px;
+    }
+    
+    .mission-highlight p {
+        font-size: 14px;
+    }
+    
+    .value-card {
+        padding: 30px 20px;
+    }
+}

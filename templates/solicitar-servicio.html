@@ -42,6 +42,82 @@
                     <input type="tel" id="phone" name="phone" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
                 </div>
 
+                <!-- Sección de Programación de Sesiones -->
+                {% if service %}
+                <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                    <h3 style="margin-top: 0; color: #667eea; font-size: 1.2rem;">📅 Programación de Sesiones</h3>
+                    
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="preferred_employee" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                            Selecciona tu {% if service.slug == 'tutoria' %}tutor{% else %}terapeuta{% endif %} preferido
+                        </label>
+                        <select id="preferred_employee" name="preferred_employee" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                            <option value="">Cargando...</option>
+                        </select>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Se mostrará la carga actual de clientes de cada profesional
+                        </small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="start_date" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                            📆 ¿Desde qué fecha quieres iniciar? *
+                        </label>
+                        <input type="date" id="start_date" name="start_date" required 
+                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Las sesiones comenzarán desde esta fecha
+                        </small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">
+                            ¿Qué días de la semana prefieres? *
+                        </label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                            <label style="display: flex; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; transition: all 0.3s;">
+                                <input type="checkbox" name="preferred_days" value="monday" style="margin-right: 8px;">
+                                <span>Lunes</span>
+                            </label>
+                            <label style="display: flex; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; transition: all 0.3s;">
+                                <input type="checkbox" name="preferred_days" value="tuesday" style="margin-right: 8px;">
+                                <span>Martes</span>
+                            </label>
+                            <label style="display: flex; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; transition: all 0.3s;">
+                                <input type="checkbox" name="preferred_days" value="wednesday" style="margin-right: 8px;">
+                                <span>Miércoles</span>
+                            </label>
+                            <label style="display: flex; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; transition: all 0.3s;">
+                                <input type="checkbox" name="preferred_days" value="thursday" style="margin-right: 8px;">
+                                <span>Jueves</span>
+                            </label>
+                            <label style="display: flex; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; transition: all 0.3s;">
+                                <input type="checkbox" name="preferred_days" value="friday" style="margin-right: 8px;">
+                                <span>Viernes</span>
+                            </label>
+                            <label style="display: flex; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; transition: all 0.3s;">
+                                <input type="checkbox" name="preferred_days" value="saturday" style="margin-right: 8px;">
+                                <span>Sábado</span>
+                            </label>
+                        </div>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Las sesiones se repetirán en estos días desde la fecha de inicio
+                        </small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="preferred_time" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                            🕐 ¿A qué hora prefieres tus sesiones? *
+                        </label>
+                        <input type="time" id="preferred_time" name="preferred_time" required 
+                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Todas las sesiones se programarán a esta hora
+                        </small>
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="message" style="display: block; margin-bottom: 8px; font-weight: 600;">Mensaje o comentarios adicionales</label>
                     <textarea id="message" name="message" rows="4" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; resize: vertical;"></textarea>

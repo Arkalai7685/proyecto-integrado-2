@@ -1,0 +1,523 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil - ImpulsaMente{% endblock %}
+
+{% block body_class %}cliente-dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cliente-dashboard.css' %}">
+<style>
+.perfil-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 120px 20px 40px;
+}
+
+.perfil-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.perfil-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #f0f2f5;
+}
+
+.perfil-avatar {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: white;
+    margin: 0 auto 20px;
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+}
+
+.perfil-header h1 {
+    color: #2c3e50;
+    font-size: 28px;
+    margin: 0 0 10px 0;
+}
+
+.perfil-header p {
+    color: #7f8c8d;
+    margin: 0;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.btn-secondary:hover {
+    background: #dee2e6;
+}
+
+.alert {
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.info-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+}
+
+.info-section h3 {
+    color: #2c3e50;
+    font-size: 16px;
+    margin: 0 0 15px 0;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.info-value {
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.password-requirements {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    color: #7f8c8d;
+    font-size: 13px;
+}
+
+.requirement.valid {
+    color: #28a745;
+}
+
+.requirement .req-icon {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.requirement.valid .req-icon::before {
+    content: '✓';
+    color: #28a745;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .perfil-card {
+        padding: 30px 20px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="perfil-container">
+    <div class="perfil-card">
+        <div class="perfil-header">
+            <div class="perfil-avatar">
+                👤
+            </div>
+            <h1>{{ user.get_full_name|default:user.username }}</h1>
+            <p>Edita tu información personal</p>
+        </div>
+
+        <div id="alertMessage" class="alert"></div>
+
+        <form id="profileForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="first_name">Nombre *</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Apellido *</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo Electrónico *</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" id="phone" name="phone" value="{{ profile.phone|default:'' }}" placeholder="+56 9 1234 5678">
+            </div>
+
+            <div class="form-group">
+                <label for="address">Dirección</label>
+                <textarea id="address" name="address" placeholder="Ingresa tu dirección completa">{{ profile.address|default:'' }}</textarea>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'cliente_dashboard' %}'">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    💾 Guardar Cambios
+                </button>
+            </div>
+        </form>
+
+        <div class="info-section">
+            <h3>ℹ️ Información de la Cuenta</h3>
+            <div class="info-item">
+                <span class="info-label">Usuario:</span>
+                <span class="info-value">{{ user.username }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Fecha de registro:</span>
+                <span class="info-value">{{ user.date_joined|date:"d/m/Y" }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Última actualización:</span>
+                <span class="info-value">{{ profile.updated_at|date:"d/m/Y H:i" }}</span>
+            </div>
+        </div>
+
+        <!-- Sección de Cambio de Contraseña -->
+        <div class="info-section" style="margin-top: 30px;">
+            <h3>🔒 Cambiar Contraseña</h3>
+            <p style="color: #7f8c8d; font-size: 14px; margin-bottom: 20px;">
+                Tu contraseña debe cumplir con los requisitos de seguridad establecidos.
+            </p>
+
+            <div id="passwordAlertMessage" class="alert" style="display: none;"></div>
+
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="current_password">Contraseña Actual *</label>
+                    <input type="password" id="current_password" name="current_password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="new_password">Nueva Contraseña *</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                    <div class="password-requirements" style="margin-top: 10px; font-size: 13px;">
+                        <div class="requirement" id="req-length">
+                            <span class="req-icon">○</span> Mínimo 8 caracteres
+                        </div>
+                        <div class="requirement" id="req-uppercase">
+                            <span class="req-icon">○</span> Al menos una letra mayúscula
+                        </div>
+                        <div class="requirement" id="req-lowercase">
+                            <span class="req-icon">○</span> Al menos una letra minúscula
+                        </div>
+                        <div class="requirement" id="req-number">
+                            <span class="req-icon">○</span> Al menos un número
+                        </div>
+                        <div class="requirement" id="req-special">
+                            <span class="req-icon">○</span> Al menos un caracter especial (!@#$%^&*)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirmar Nueva Contraseña *</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        🔒 Cambiar Contraseña
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Validación del formulario de perfil
+document.getElementById('profileForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        first_name: document.getElementById('first_name').value,
+        last_name: document.getElementById('last_name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value
+    };
+    
+    try {
+        const response = await fetch('/api/cliente/actualizar-perfil/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        const alertDiv = document.getElementById('alertMessage');
+        
+        if (data.success) {
+            alertDiv.className = 'alert alert-success';
+            alertDiv.style.display = 'block';
+            alertDiv.textContent = '✅ ' + data.message;
+            
+            // Actualizar el nombre en el header
+            document.querySelector('.perfil-header h1').textContent = 
+                data.data.first_name + ' ' + data.data.last_name;
+            
+            // Scroll suave al mensaje
+            alertDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            // Ocultar mensaje después de 5 segundos
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        } else {
+            alertDiv.className = 'alert alert-error';
+            alertDiv.style.display = 'block';
+            alertDiv.textContent = '❌ ' + (data.error || 'Error al actualizar el perfil');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        const alertDiv = document.getElementById('alertMessage');
+        alertDiv.className = 'alert alert-error';
+        alertDiv.style.display = 'block';
+        alertDiv.textContent = '❌ Error de conexión. Por favor, intenta nuevamente.';
+    }
+});
+
+// Validación en tiempo real de contraseña
+const newPasswordInput = document.getElementById('new_password');
+if (newPasswordInput) {
+    newPasswordInput.addEventListener('input', function() {
+        const password = this.value;
+        
+        // Validar longitud
+        const lengthReq = document.getElementById('req-length');
+        if (password.length >= 8) {
+            lengthReq.classList.add('valid');
+        } else {
+            lengthReq.classList.remove('valid');
+        }
+        
+        // Validar mayúscula
+        const uppercaseReq = document.getElementById('req-uppercase');
+        if (/[A-Z]/.test(password)) {
+            uppercaseReq.classList.add('valid');
+        } else {
+            uppercaseReq.classList.remove('valid');
+        }
+        
+        // Validar minúscula
+        const lowercaseReq = document.getElementById('req-lowercase');
+        if (/[a-z]/.test(password)) {
+            lowercaseReq.classList.add('valid');
+        } else {
+            lowercaseReq.classList.remove('valid');
+        }
+        
+        // Validar número
+        const numberReq = document.getElementById('req-number');
+        if (/\d/.test(password)) {
+            numberReq.classList.add('valid');
+        } else {
+            numberReq.classList.remove('valid');
+        }
+        
+        // Validar caracter especial
+        const specialReq = document.getElementById('req-special');
+        if (/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/;~`]/.test(password)) {
+            specialReq.classList.add('valid');
+        } else {
+            specialReq.classList.remove('valid');
+        }
+    });
+}
+
+// Formulario de cambio de contraseña
+const passwordForm = document.getElementById('passwordForm');
+if (passwordForm) {
+    passwordForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            current_password: document.getElementById('current_password').value,
+            new_password: document.getElementById('new_password').value,
+            confirm_password: document.getElementById('confirm_password').value
+        };
+        
+        try {
+            const response = await fetch('/api/cliente/cambiar-contrasena/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json();
+            const alertDiv = document.getElementById('passwordAlertMessage');
+            
+            if (data.success) {
+                alertDiv.className = 'alert alert-success';
+                alertDiv.style.display = 'block';
+                alertDiv.textContent = '✅ ' + data.message;
+                
+                // Limpiar formulario
+                passwordForm.reset();
+                
+                // Resetear indicadores de requisitos
+                document.querySelectorAll('.requirement').forEach(req => {
+                    req.classList.remove('valid');
+                });
+                
+                // Scroll suave al mensaje
+                alertDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+                // Ocultar mensaje después de 5 segundos
+                setTimeout(() => {
+                    alertDiv.style.display = 'none';
+                }, 5000);
+            } else {
+                alertDiv.className = 'alert alert-error';
+                alertDiv.style.display = 'block';
+                
+                let errorMessage = '❌ ' + (data.error || 'Error al cambiar la contraseña');
+                
+                // Si hay errores de validación, mostrarlos
+                if (data.validation_errors && data.validation_errors.length > 0) {
+                    errorMessage += '\n\nRequisitos no cumplidos:';
+                    data.validation_errors.forEach(error => {
+                        errorMessage += '\n• ' + error;
+                    });
+                }
+                
+                alertDiv.textContent = errorMessage;
+                alertDiv.style.whiteSpace = 'pre-line';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            const alertDiv = document.getElementById('passwordAlertMessage');
+            alertDiv.className = 'alert alert-error';
+            alertDiv.style.display = 'block';
+            alertDiv.textContent = '❌ Error de conexión. Por favor, intenta nuevamente.';
+        }
+    });
+}
+</script>
+{% endblock %}

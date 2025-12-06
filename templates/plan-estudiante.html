@@ -18,7 +18,7 @@
                 <h3>{{ price.plan }}</h3>
                 <span class="plan-price">${{ price.price|floatformat:0 }}</span>
                 <p>{{ price.description }}</p>
-                <a href="{% url 'solicitar_servicio' %}?service=plan-estudiante&plan={{ price.plan }}" class="card-btn">Solicitar</a>
+                <a href="{% url 'solicitar_plan_estudiante' %}?service=plan-estudiante&plan={{ price.plan }}" class="card-btn">Solicitar</a>
             </div>
             {% empty %}
             <p>No hay planes disponibles en este momento.</p>

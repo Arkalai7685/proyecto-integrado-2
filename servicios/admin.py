@@ -11,9 +11,23 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(Price)
 class PriceAdmin(admin.ModelAdmin):
-    list_display = ['service', 'plan', 'price', 'currency', 'created_at']
-    list_filter = ['service', 'currency']
+    list_display = ['service', 'plan', 'price', 'currency', 'is_featured', 'created_at']
+    list_filter = ['service', 'currency', 'is_featured']
     search_fields = ['plan', 'description']
+    list_editable = ['is_featured']
+    actions = ['mark_as_featured', 'unmark_as_featured']
+    
+    def mark_as_featured(self, request, queryset):
+        """Marcar planes seleccionados como destacados"""
+        updated = queryset.update(is_featured=True)
+        self.message_user(request, f'{updated} plan(es) marcado(s) como destacado(s).')
+    mark_as_featured.short_description = "Marcar como destacado"
+    
+    def unmark_as_featured(self, request, queryset):
+        """Desmarcar planes seleccionados como destacados"""
+        updated = queryset.update(is_featured=False)
+        self.message_user(request, f'{updated} plan(es) desmarcado(s) como destacado(s).')
+    unmark_as_featured.short_description = "Quitar de destacados"
 
 
 @admin.register(Customer)

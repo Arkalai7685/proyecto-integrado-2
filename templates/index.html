@@ -6,75 +6,6 @@
 {% block nav_inicio %}active{% endblock %}
 
 {% block content %}
-        <!-- Featured Plans Section -->
-        <section id="featured-plans" class="section">
-            <div class="container">
-                <h2 class="section-title">Planes Destacados</h2>
-                <p>Ofrecemos planes diseñados para cubrir necesidades desde apoyo puntual hasta acompañamiento integral:</p>
-
-                <div class="plans-category">
-                    <h3 class="category-title">Planes de Tutoría</h3>
-                    <div class="plans-grid">
-                        {% for price in tutoria_prices %}
-                        <div class="plan-card">
-                            <img src="{% static 'images/tutoria-basic.jpg' %}" alt="{{ price.plan }}" class="plan-image">
-                            <h3>{{ price.plan }}</h3>
-                            <span class="plan-price">${{ price.price|floatformat:0 }}</span>
-                            <p>{{ price.description }}</p>
-                            <a href="{% url 'solicitar_servicio' %}?service=tutoria&plan={{ price.plan }}" class="card-btn">Solicitar</a>
-                        </div>
-                        {% empty %}
-                        <p>No hay planes disponibles en este momento.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="plans-category">
-                    <h3 class="category-title">Planes de Terapia</h3>
-                    <div class="plans-grid">
-                        {% for price in terapia_prices %}
-                        <div class="plan-card">
-                            <img src="{% static 'images/terapia-individual.jpg' %}" alt="{{ price.plan }}" class="plan-image">
-                            <h3>{{ price.plan }}</h3>
-                            <span class="plan-price">${{ price.price|floatformat:0 }}</span>
-                            <p>{{ price.description }}</p>
-                            <a href="{% url 'solicitar_servicio' %}?service=terapia&plan={{ price.plan }}" class="card-btn">Solicitar</a>
-                        </div>
-                        {% empty %}
-                        <p>No hay planes disponibles en este momento.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="plans-category">
-                    <h3 class="category-title">Planes de Estudiante</h3>
-                    <div class="plans-grid">
-                        <div class="plan-card">
-                            <img src="{% static 'images/student-basic.jpg' %}" alt="Plan Básico" class="plan-image">
-                            <h3>Plan Básico</h3>
-                            <span class="plan-price">$100.000</span>
-                            <p>Incluye tutoría y terapia para necesidades puntuales.</p>
-                            <a href="{% url 'solicitar_servicio' %}?service=plan-estudiante&plan=basico" class="card-btn">Solicitar</a>
-                        </div>
-                        <div class="plan-card">
-                            <img src="{% static 'images/student-advanced.jpg' %}" alt="Plan Avanzado" class="plan-image">
-                            <h3>Plan Avanzado</h3>
-                            <span class="plan-price">$250.000</span>
-                            <p>Un paquete completo para seguimiento continuo.</p>
-                            <a href="{% url 'solicitar_servicio' %}?service=plan-estudiante&plan=avanzado" class="card-btn">Solicitar</a>
-                        </div>
-                        <div class="plan-card">
-                            <img src="{% static 'images/student-premium.jpg' %}" alt="Plan Premium" class="plan-image">
-                            <h3>Plan Premium</h3>
-                            <span class="plan-price">$400.000</span>
-                            <p>Máximo apoyo con tutoría y terapia intensiva.</p>
-                            <a href="{% url 'solicitar_servicio' %}?service=plan-estudiante&plan=premium" class="card-btn">Solicitar</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Why Choose Us Section -->
         <section id="why-choose" class="section bg-light">
             <div class="container">
@@ -145,6 +76,69 @@
                         <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mujer trabajando">
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Featured Plans Section -->
+        <section id="featured-plans" class="section">
+            <div class="container">
+                <h2 class="section-title">Planes Destacados</h2>
+                <p>Ofrecemos planes diseñados para cubrir necesidades desde apoyo puntual hasta acompañamiento integral:</p>
+
+                <div class="plans-category">
+                    <h3 class="category-title">Planes de Tutoría</h3>
+                    <div class="plans-grid">
+                        {% for price in tutoria_prices %}
+                        <div class="plan-card">
+                            <img src="{% static 'images/tutoria-basic.jpg' %}" alt="{{ price.plan }}" class="plan-image">
+                            <h3>{{ price.plan }}</h3>
+                            <span class="plan-price">${{ price.price|floatformat:0 }}</span>
+                            <p>{{ price.description }}</p>
+                            <a href="{% url 'solicitar_servicio' %}?service=tutoria&plan={{ price.plan }}" class="card-btn">Solicitar</a>
+                        </div>
+                        {% empty %}
+                        <p>No hay planes disponibles en este momento.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="plans-category">
+                    <h3 class="category-title">Planes de Terapia</h3>
+                    <div class="plans-grid">
+                        {% for price in terapia_prices %}
+                        <div class="plan-card">
+                            <img src="{% static 'images/terapia-individual.jpg' %}" alt="{{ price.plan }}" class="plan-image">
+                            <h3>{{ price.plan }}</h3>
+                            <span class="plan-price">${{ price.price|floatformat:0 }}</span>
+                            <p>{{ price.description }}</p>
+                            <a href="{% url 'solicitar_servicio' %}?service=terapia&plan={{ price.plan }}" class="card-btn">Solicitar</a>
+                        </div>
+                        {% empty %}
+                        <p>No hay planes disponibles en este momento.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Planes de Estudiante - Solo si hay destacados -->
+                {% if plan_estudiante_prices %}
+                <div class="plans-category">
+                    <h3 class="category-title">Planes de Estudiante</h3>
+                    <div class="plans-grid">
+                        {% for price in plan_estudiante_prices %}
+                        <div class="plan-card">
+                            <img src="{% static 'images/student-'|add:forloop.counter|add:'.jpg' %}" 
+                                 alt="{{ price.plan }}" 
+                                 class="plan-image"
+                                 onerror="this.src='{% static 'images/plan-default.jpg' %}'">
+                            <h3>{{ price.plan }}</h3>
+                            <span class="plan-price">${{ price.price|floatformat:0 }}</span>
+                            <p>{{ price.description }}</p>
+                            <a href="{% url 'solicitar_plan_estudiante' %}?plan={{ price.id }}" class="card-btn">Solicitar</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </section>
 {% endblock %}

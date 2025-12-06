@@ -7,6 +7,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/psicologo-dashboard.css' %}?v=4.0">
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -15,6 +16,7 @@
             <!-- Tabs Navigation -->
             <div class="tabs-navigation">
                 <button class="tab-btn active" data-tab="estudiantes">ESTUDIANTES</button>
+                <button class="tab-btn" data-tab="chat">💬 CHAT</button>
                 <button class="tab-btn" data-tab="solicitudes">SOLICITUDES</button>
             </div>
 
@@ -22,6 +24,63 @@
             <div class="tab-content-wrapper">
                 <!-- Estudiantes Tab -->
                 <div class="tab-content active" id="estudiantes-tab">
+                    <!-- Filtros y Ordenamiento -->
+                    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <form method="GET" action="" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 250px;">
+                                <input 
+                                    type="text" 
+                                    name="search" 
+                                    placeholder="🔍 Buscar por nombre o email..." 
+                                    value="{{ search_query }}"
+                                    style="width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: border-color 0.3s;"
+                                    onfocus="this.style.borderColor='#667eea'"
+                                    onblur="this.style.borderColor='#e0e0e0'"
+                                >
+                            </div>
+                            <div style="flex: 0 0 auto;">
+                                <select 
+                                    name="order_by" 
+                                    onchange="this.form.submit()"
+                                    style="padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; background: white; cursor: pointer; min-width: 200px;"
+                                >
+                                    <option value="recent_activity" {% if order_by == 'recent_activity' %}selected{% endif %}>📅 Actividad Reciente</option>
+                                    <option value="next_appointment" {% if order_by == 'next_appointment' %}selected{% endif %}>🗓️ Próxima Cita</option>
+                                    <option value="name" {% if order_by == 'name' %}selected{% endif %}>🔤 Nombre A-Z</option>
+                                    <option value="progress" {% if order_by == 'progress' %}selected{% endif %}>📊 Mayor Progreso</option>
+                                    <option value="new_files" {% if order_by == 'new_files' %}selected{% endif %}>📁 Archivos Nuevos</option>
+                                </select>
+                            </div>
+                            <div style="flex: 0 0 auto;">
+                                <button 
+                                    type="submit" 
+                                    style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: transform 0.2s;"
+                                    onmouseover="this.style.transform='translateY(-2px)'"
+                                    onmouseout="this.style.transform='translateY(0)'"
+                                >
+                                    Buscar
+                                </button>
+                            </div>
+                            {% if search_query %}
+                            <div style="flex: 0 0 auto;">
+                                <a 
+                                    href="{% url 'psicologo_dashboard' %}" 
+                                    style="padding: 12px 24px; background: #f0f0f0; color: #666; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; transition: background 0.2s;"
+                                    onmouseover="this.style.background='#e0e0e0'"
+                                    onmouseout="this.style.background='#f0f0f0'"
+                                >
+                                    Limpiar
+                                </a>
+                            </div>
+                            {% endif %}
+                        </form>
+                        {% if search_query %}
+                        <div style="margin-top: 12px; color: #667eea; font-size: 14px;">
+                            📋 Mostrando {{ clients_data|length }} resultado(s) para "{{ search_query }}"
+                        </div>
+                        {% endif %}
+                    </div>
+                    
                     <div class="estudiantes-grid">
                         {% if clients_data %}
                             {% for client_info in clients_data %}
@@ -36,6 +95,9 @@
                                     <div class="student-badges">
                                         <span class="badge estudiante-badge">CLIENTE</span>
                                         <span class="badge datos-badge">{{ client_info.service.name|upper }}</span>
+                                        {% if client_info.recent_files_count > 0 %}
+                                        <span class="badge" style="background: #ff6b6b; color: white; animation: pulse 2s infinite;">📁 {{ client_info.recent_files_count }} nuevo(s)</span>
+                                        {% endif %}
                                     </div>
                                     <div class="student-name" style="margin: 10px 0; font-weight: 600; font-size: 16px;">
                                         {% if client_info.client.first_name %}
@@ -47,15 +109,26 @@
                                     <div style="font-size: 13px; color: #666; margin-bottom: 10px;">
                                         {{ client_info.client.email }}
                                     </div>
-                                    <div style="font-size: 12px; color: #999; margin-bottom: 10px;">
+                                    <div style="font-size: 12px; color: #999; margin-bottom: 5px;">
                                         📅 Sesiones: {{ client_info.completed_sessions }}/{{ client_info.total_sessions }}
                                     </div>
+                                    {% if client_info.next_appointment %}
+                                    <div style="font-size: 12px; color: #667eea; margin-bottom: 5px; font-weight: 500;">
+                                        🗓️ Próxima: {{ client_info.next_appointment.scheduled_date|date:"d/m/Y H:i" }}
+                                    </div>
+                                    {% endif %}
+                                    {% if client_info.last_activity %}
+                                    <div style="font-size: 11px; color: #999; margin-bottom: 10px;">
+                                        ⏰ Última actividad: {{ client_info.last_activity|timesince }} atrás
+                                    </div>
+                                    {% endif %}
                                     <div class="progress-section">
                                         <div class="progress-header">
                                             <span class="progress-label">PROGRESO</span>
                                             <div class="action-buttons">
                                                 <button class="ver-btn" onclick="verDetalleCliente({{ client_info.client.id }})">VER</button>
                                                 <button class="auditoria-btn" onclick="window.location.href='{% url 'auditoria_estudiante' %}?client={{ client_info.client.id }}'">AUDITORÍA</button>
+                                                <button class="btn-ver-archivos" data-client-id="{{ client_info.client.id }}">ARCHIVOS</button>
                                             </div>
                                         </div>
                                         <div class="progress-bar-container">
@@ -79,85 +152,98 @@
                     </div>
                 </div>
 
-                <!-- Solicitudes Tab -->
-                <div class="tab-content" id="solicitudes-tab">
-                    <div class="solicitudes-container">
-                        <div class="solicitudes-header">
-                            <h3>Nuevas Solicitudes de Asesoría</h3>
-                            <span class="solicitudes-count">4 pendientes</span>
+                <!-- Chat Tab -->
+                <div class="tab-content" id="chat-tab">
+                    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h3 style="margin: 0 0 10px 0; color: #333;">💬 Chat con Clientes</h3>
+                        <p style="margin: 0; color: #666; font-size: 14px;">Comunícate directamente con tus clientes asignados y comparte archivos.</p>
+                    </div>
+                    
+                    <div class="chat-container">
+                        <div class="chat-sidebar">
+                            <div class="chat-sidebar-header">
+                                <h3>Mis Clientes</h3>
+                            </div>
+                            <div class="chat-conversations-list" id="chatConversationsList">
+                                <div style="padding: 20px; text-align: center; color: #a0aec0;">
+                                    <p>Cargando conversaciones...</p>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="solicitudes-list">
-                            <div class="solicitud-item">
-                                <div class="solicitud-info">
-                                    <div class="solicitud-avatar">
-                                        <img src="{% static 'images/personal/student5.jpg' %}" alt="Laura Silva">
-                                    </div>
-                                    <div class="solicitud-details">
-                                        <h4>Laura Silva</h4>
-                                        <p>Necesita ayuda con metodología de investigación</p>
-                                        <span class="solicitud-time">Hace 2 horas</span>
-                                    </div>
-                                </div>
-                                <div class="solicitud-actions">
-                                    <button class="accept-btn">Aceptar</button>
-                                    <button class="decline-btn">Rechazar</button>
+                        <div class="chat-main" id="chatMainArea" style="display: none;">
+                            <div class="chat-header">
+                                <div class="chat-header-info">
+                                    <h3>Selecciona un cliente</h3>
+                                    <p>Elige un cliente para comenzar a chatear</p>
                                 </div>
                             </div>
-
-                            <div class="solicitud-item">
-                                <div class="solicitud-info">
-                                    <div class="solicitud-avatar">
-                                        <img src="{% static 'images/personal/student6.jpg' %}" alt="Miguel Torres">
-                                    </div>
-                                    <div class="solicitud-details">
-                                        <h4>Miguel Torres</h4>
-                                        <p>Revisión de marco teórico y referencias bibliográficas</p>
-                                        <span class="solicitud-time">Hace 5 horas</span>
-                                    </div>
-                                </div>
-                                <div class="solicitud-actions">
-                                    <button class="accept-btn">Aceptar</button>
-                                    <button class="decline-btn">Rechazar</button>
+                            <div class="chat-messages" id="chatMessagesContainer">
+                                <div class="chat-empty-state">
+                                    <p>Selecciona una conversación para ver los mensajes</p>
                                 </div>
                             </div>
-
-                            <div class="solicitud-item">
-                                <div class="solicitud-info">
-                                    <div class="solicitud-avatar">
-                                        <img src="{% static 'images/personal/student7.jpg' %}" alt="Sofia Mendez">
-                                    </div>
-                                    <div class="solicitud-details">
-                                        <h4>Sofia Mendez</h4>
-                                        <p>Apoyo en análisis de datos cuantitativos</p>
-                                        <span class="solicitud-time">Ayer</span>
-                                    </div>
-                                </div>
-                                <div class="solicitud-actions">
-                                    <button class="accept-btn">Aceptar</button>
-                                    <button class="decline-btn">Rechazar</button>
-                                </div>
-                            </div>
-
-                            <div class="solicitud-item">
-                                <div class="solicitud-info">
-                                    <div class="solicitud-avatar">
-                                        <img src="{% static 'images/personal/student8.jpg' %}" alt="Roberto Herrera">
-                                    </div>
-                                    <div class="solicitud-details">
-                                        <h4>Roberto Herrera</h4>
-                                        <p>Preparación para defensa de tesis</p>
-                                        <span class="solicitud-time">Hace 2 días</span>
-                                    </div>
-                                </div>
-                                <div class="solicitud-actions">
-                                    <button class="accept-btn">Aceptar</button>
-                                    <button class="decline-btn">Rechazar</button>
+                            <div class="chat-input-container">
+                                <div class="chat-input-wrapper">
+                                    <textarea id="chatInput" class="chat-input" placeholder="Escribe tu mensaje..." rows="1"></textarea>
+                                    <button id="sendMessageBtn" class="chat-send-btn">Enviar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Solicitudes Tab -->
+                <div class="tab-content" id="solicitudes-tab">
+                    <div class="solicitudes-container">
+                        <div class="solicitudes-header">
+                            <h3>Nuevas Solicitudes de Asesoría</h3>
+                            <span class="solicitudes-count">{{ pending_requests_count }} pendiente{{ pending_requests_count|pluralize }}</span>
+                        </div>
+                        
+                        <div class="solicitudes-list">
+                            {% if pending_requests %}
+                                {% for order in pending_requests %}
+                                <div class="solicitud-item" data-order-id="{{ order.id }}">
+                                    <div class="solicitud-info">
+                                        <div class="solicitud-avatar">
+                                            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
+                                                {{ order.customer.name|first|upper }}
+                                            </div>
+                                        </div>
+                                        <div class="solicitud-details">
+                                            <h4>{{ order.customer.name }}</h4>
+                                            <p>
+                                                <strong>{{ order.service.name }}</strong> - {{ order.price.plan }}
+                                                {% if order.notes %}
+                                                <br><span style="font-size: 13px; color: #666;">{{ order.notes|truncatewords:15 }}</span>
+                                                {% endif %}
+                                            </p>
+                                            <span class="solicitud-time">
+                                                {{ order.created_at|timesince }} atrás
+                                                {% if order.start_date %}
+                                                    • Inicio: {{ order.start_date|date:"d/m/Y" }}
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="solicitud-actions">
+                                        <button class="accept-btn" onclick="acceptRequest({{ order.id }})">Aceptar</button>
+                                        <button class="decline-btn" onclick="rejectRequest({{ order.id }})">Rechazar</button>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div style="text-align: center; padding: 60px 20px;">
+                                    <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;">📋</div>
+                                    <h3 style="color: #666; margin-bottom: 10px;">No hay solicitudes pendientes</h3>
+                                    <p style="color: #999;">Cuando el administrador te asigne nuevas solicitudes, aparecerán aquí.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Archivos Tab - ELIMINADO, ahora se accede desde botón en tarjeta de estudiante -->
             </div>
 
             <!-- Dashboard Grid -->
@@ -318,6 +404,10 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
         .modal-content button:hover {
             background: rgba(255,255,255,0.3) !important;
         }
@@ -328,7 +418,8 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/psicologo-dashboard.js' %}?v=4.0"></script>
+<script src="{% static 'js/psicologo-dashboard.js' %}?v=13.0"></script>
+<script src="{% static 'js/chat.js' %}"></script>
 <script>
 // Función para ver detalles del cliente
 function verDetalleCliente(clientId) {

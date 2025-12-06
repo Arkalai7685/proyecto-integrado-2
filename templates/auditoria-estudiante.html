@@ -127,7 +127,7 @@
                         <!-- Statistics -->
                         <div class="material-stats">
                             <div class="stat-card completed">
-                                <div class="stat-number">{{ sessions|length|default:0 }}</div>
+                                <div class="stat-number">{{ total_sessions|default:0 }}</div>
                                 <div class="stat-label">Total Sesiones</div>
                             </div>
                             <div class="stat-card completed">
@@ -135,7 +135,7 @@
                                 <div class="stat-label">Completadas</div>
                             </div>
                             <div class="stat-card pending">
-                                <div class="stat-number">{% for s in sessions %}{% if s.status == 'scheduled' or s.status == 'confirmed' %}1{% endif %}{% endfor %}</div>
+                                <div class="stat-number">{{ scheduled_sessions|default:0 }}</div>
                                 <div class="stat-label">Programadas</div>
                             </div>
                         </div>

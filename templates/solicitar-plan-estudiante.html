@@ -1,0 +1,315 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Solicitar Plan Estudiante - ImpulsaMente{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container" style="max-width: 900px;">
+            <h1 class="section-title">Solicitar Plan Estudiante</h1>
+            
+            {% if service and price %}
+            <div class="service-summary" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                <h2 style="margin-top: 0;">{{ service.name }}</h2>
+                <h3 style="color: #ff8c42; margin: 10px 0;">{{ price.plan }}</h3>
+                <p style="font-size: 1.5rem; font-weight: 600; color: #333;">${{ price.price|floatformat:0 }}</p>
+                <p>{{ price.description }}</p>
+            </div>
+            {% endif %}
+
+            <form id="studentPlanForm" style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <!-- Datos del Cliente -->
+                <h3 style="color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 10px; margin-bottom: 20px;">
+                    👤 Datos del Estudiante
+                </h3>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="name" style="display: block; margin-bottom: 8px; font-weight: 600;">Nombre completo *</label>
+                    <input type="text" id="name" name="name" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="email" style="display: block; margin-bottom: 8px; font-weight: 600;">Correo electrónico *</label>
+                    <input type="email" id="email" name="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label for="phone" style="display: block; margin-bottom: 8px; font-weight: 600;">Teléfono</label>
+                    <input type="tel" id="phone" name="phone" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                </div>
+
+                <!-- Sección de TUTORÍA -->
+                <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #4caf50;">
+                    <h3 style="margin-top: 0; color: #4caf50; font-size: 1.2rem;">📚 Configuración de Tutorías</h3>
+                    
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="preferred_tutor" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                            Selecciona tu tutor *
+                        </label>
+                        <select id="preferred_tutor" name="preferred_tutor" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                            <option value="">Cargando tutores...</option>
+                        </select>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Se mostrará la carga actual de clientes de cada tutor
+                        </small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="tutoring_start_date" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                            📆 Fecha de inicio de tutorías *
+                        </label>
+                        <input type="date" id="tutoring_start_date" name="tutoring_start_date" required 
+                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Primera sesión de tutoría (semanal)
+                        </small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="tutoring_time" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                            🕐 Hora de tutorías *
+                        </label>
+                        <input type="time" id="tutoring_time" name="tutoring_time" required 
+                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Todas las sesiones de tutoría serán a esta hora (el número de sesiones se define en el plan)
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Sección de TERAPIA -->
+                <div style="background: #fff3e0; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ff9800;">
+                    <h3 style="margin-top: 0; color: #ff9800; font-size: 1.2rem;">🧠 Configuración de Terapias</h3>
+                    
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="preferred_therapist" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                            Selecciona tu terapeuta *
+                        </label>
+                        <select id="preferred_therapist" name="preferred_therapist" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                            <option value="">Cargando terapeutas...</option>
+                        </select>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Se mostrará la carga actual de clientes de cada terapeuta
+                        </small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="therapy_start_date" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                            📆 Fecha de inicio de terapias *
+                        </label>
+                        <input type="date" id="therapy_start_date" name="therapy_start_date" required 
+                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Primera sesión de terapia (semanal)
+                        </small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="therapy_time" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                            🕐 Hora de terapias *
+                        </label>
+                        <input type="time" id="therapy_time" name="therapy_time" required 
+                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Todas las sesiones de terapia serán a esta hora (el número de sesiones se define en el plan)
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Notas adicionales -->
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="message" style="display: block; margin-bottom: 8px; font-weight: 600;">Notas adicionales</label>
+                    <textarea id="message" name="message" rows="4" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; resize: vertical;"></textarea>
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        Información adicional que quieras compartir
+                    </small>
+                </div>
+
+                <button type="submit" class="card-btn" style="width: 100%; padding: 15px; font-size: 1.1rem; cursor: pointer; border: none;">
+                    Enviar Solicitud
+                </button>
+            </form>
+
+            <div id="responseMessage" style="margin-top: 20px; padding: 15px; border-radius: 4px; display: none;"></div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const serviceSlug = urlParams.get('service');
+    const planName = urlParams.get('plan');
+
+    // Cargar tutores
+    fetch('/api/available-employees/?service=tutoria')
+        .then(response => response.json())
+        .then(data => {
+            const tutorSelect = document.getElementById('preferred_tutor');
+            tutorSelect.innerHTML = '<option value="">-- Selecciona un tutor --</option>';
+            
+            if (data.employees && data.employees.length > 0) {
+                data.employees.forEach(emp => {
+                    const option = document.createElement('option');
+                    option.value = emp.id;
+                    option.textContent = `${emp.name} (${emp.active_clients} clientes activos)`;
+                    tutorSelect.appendChild(option);
+                });
+            } else {
+                tutorSelect.innerHTML = '<option value="">No hay tutores disponibles</option>';
+            }
+        })
+        .catch(error => {
+            console.error('Error cargando tutores:', error);
+            document.getElementById('preferred_tutor').innerHTML = '<option value="">Error al cargar tutores</option>';
+        });
+
+    // Cargar terapeutas
+    fetch('/api/available-employees/?service=terapia')
+        .then(response => response.json())
+        .then(data => {
+            const therapistSelect = document.getElementById('preferred_therapist');
+            therapistSelect.innerHTML = '<option value="">-- Selecciona un terapeuta --</option>';
+            
+            if (data.employees && data.employees.length > 0) {
+                data.employees.forEach(emp => {
+                    const option = document.createElement('option');
+                    option.value = emp.id;
+                    option.textContent = `${emp.name} (${emp.active_clients} clientes activos)`;
+                    therapistSelect.appendChild(option);
+                });
+            } else {
+                therapistSelect.innerHTML = '<option value="">No hay terapeutas disponibles</option>';
+            }
+        })
+        .catch(error => {
+            console.error('Error cargando terapeutas:', error);
+            document.getElementById('preferred_therapist').innerHTML = '<option value="">Error al cargar terapeutas</option>';
+        });
+
+    // Configurar fechas mínimas (mañana)
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0];
+    
+    const tutoringDateInput = document.getElementById('tutoring_start_date');
+    const therapyDateInput = document.getElementById('therapy_start_date');
+    
+    if (tutoringDateInput) {
+        tutoringDateInput.setAttribute('min', minDate);
+        tutoringDateInput.value = minDate;
+    }
+    
+    if (therapyDateInput) {
+        therapyDateInput.setAttribute('min', minDate);
+        therapyDateInput.value = minDate;
+    }
+
+    // Manejar envío del formulario
+    const form = document.getElementById('studentPlanForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const data = {
+            service: serviceSlug,
+            plan: planName,
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            message: document.getElementById('message').value,
+            preferred_tutor: document.getElementById('preferred_tutor').value,
+            preferred_therapist: document.getElementById('preferred_therapist').value,
+            tutoring_start_date: document.getElementById('tutoring_start_date').value,
+            therapy_start_date: document.getElementById('therapy_start_date').value,
+            tutoring_time: document.getElementById('tutoring_time').value,
+            therapy_time: document.getElementById('therapy_time').value,
+            tutoring_sessions: document.getElementById('tutoring_sessions').value,
+            therapy_sessions: document.getElementById('therapy_sessions').value
+        };
+
+        // Validaciones
+        if (!data.preferred_tutor) {
+            alert('Por favor selecciona un tutor');
+            return;
+        }
+        
+        if (!data.preferred_therapist) {
+            alert('Por favor selecciona un terapeuta');
+            return;
+        }
+
+        if (!data.tutoring_start_date || !data.therapy_start_date) {
+            alert('Por favor selecciona las fechas de inicio');
+            return;
+        }
+
+        if (!data.tutoring_time || !data.therapy_time) {
+            alert('Por favor selecciona las horas');
+            return;
+        }
+
+        // Enviar solicitud
+        fetch('/api/submit-student-plan/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            const responseDiv = document.getElementById('responseMessage');
+            responseDiv.style.display = 'block';
+            
+            if (result.success) {
+                responseDiv.style.background = '#d4edda';
+                responseDiv.style.color = '#155724';
+                responseDiv.innerHTML = `
+                    <strong>✅ ¡Solicitud enviada correctamente!</strong><br>
+                    ${result.message}<br>
+                    <small>Order ID: ${result.order_id}</small>
+                `;
+                form.reset();
+                
+                // Recargar fechas mínimas
+                if (tutoringDateInput) tutoringDateInput.value = minDate;
+                if (therapyDateInput) therapyDateInput.value = minDate;
+            } else {
+                responseDiv.style.background = '#f8d7da';
+                responseDiv.style.color = '#721c24';
+                responseDiv.innerHTML = `<strong>❌ Error:</strong> ${result.message}`;
+            }
+            
+            responseDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const responseDiv = document.getElementById('responseMessage');
+            responseDiv.style.display = 'block';
+            responseDiv.style.background = '#f8d7da';
+            responseDiv.style.color = '#721c24';
+            responseDiv.innerHTML = '<strong>❌ Error al enviar la solicitud.</strong> Por favor, intenta de nuevo.';
+        });
+    });
+
+    // Función para obtener el token CSRF
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+{% endblock %}

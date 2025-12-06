@@ -7,11 +7,19 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/cliente-dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
 {% endblock %}
 
 {% block content %}
     <main class="dashboard-main">
         <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h1 style="color: #333; margin: 0;">👤 Mi Dashboard</h1>
+                <a href="{% url 'cliente_perfil' %}" class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+                    ⚙️ Mi Perfil
+                </a>
+            </div>
+            
             <div class="dashboard-grid">
                 <!-- Progress Section -->
                 <section class="progress-section">
@@ -23,172 +31,437 @@
                                     <path d="M12 20l6 6 10-12" stroke="#4CAF50" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
-                            <h3>PROGRESO DE TESIS</h3>
+                            <h3>MI PROGRESO</h3>
                         </div>
                         
+                        {% if total_sessions > 0 %}
                         <div class="progress-container">
                             <div class="progress-bar-bg">
-                                <div class="progress-bar" data-progress="65"></div>
+                                <div class="progress-bar" data-progress="{{ progress }}"></div>
                             </div>
-                            <span class="progress-percentage">65%</span>
+                            <span class="progress-percentage">{{ progress }}%</span>
                         </div>
                         
-                        <div class="progress-milestones">
-                            <div class="milestone completed">
-                                <span class="milestone-dot"></span>
-                                <span>Propuesta</span>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px;">
+                            <div style="text-align: center; padding: 15px; background: #e8f5e9; border-radius: 8px;">
+                                <div style="font-size: 24px; font-weight: 600; color: #4CAF50;">{{ total_sessions }}</div>
+                                <div style="font-size: 12px; color: #666;">Total Sesiones</div>
                             </div>
-                            <div class="milestone completed">
-                                <span class="milestone-dot"></span>
-                                <span>Marco Teórico</span>
+                            <div style="text-align: center; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                                <div style="font-size: 24px; font-weight: 600; color: #2196F3;">{{ completed_sessions }}</div>
+                                <div style="font-size: 12px; color: #666;">Completadas</div>
                             </div>
-                            <div class="milestone active">
-                                <span class="milestone-dot"></span>
-                                <span>Metodología</span>
+                            <div style="text-align: center; padding: 15px; background: #fff3e0; border-radius: 8px;">
+                                <div style="font-size: 24px; font-weight: 600; color: #FF9800;">{{ scheduled_sessions }}</div>
+                                <div style="font-size: 12px; color: #666;">Programadas</div>
                             </div>
-                            <div class="milestone">
-                                <span class="milestone-dot"></span>
-                                <span>Análisis</span>
+                        </div>
+                        {% else %}
+                        <div style="text-align: center; padding: 40px; color: #999;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">📚</div>
+                            <p>Aún no tienes sesiones programadas</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Assignments Section -->
+                <section class="folders-section" style="background: white !important;">
+                    <h3 style="margin-bottom: 15px; color: #333;">👥 Mis Asesorías</h3>
+                    <div style="display: block !important; gap: 15px; max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                        {% for assignment in assignments %}
+                        <div style="display: block !important; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #4CAF50; margin-bottom: 15px;">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                <div style="font-size: 32px;">
+                                    {% if assignment.service.slug == 'tutoria' %}📚
+                                    {% elif assignment.service.slug == 'terapia' %}🧠
+                                    {% else %}📄{% endif %}
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0 0 5px 0; color: #333;">{{ assignment.service.name }}</h4>
+                                    <p style="margin: 0; color: #666; font-size: 14px;">
+                                        Con: {{ assignment.employee.get_full_name|default:assignment.employee.username }}
+                                    </p>
+                                    <p style="margin: 5px 0 0 0; color: #999; font-size: 12px;">
+                                        Desde: {{ assignment.assigned_at|date:"d/m/Y" }}
+                                    </p>
+                                </div>
                             </div>
-                            <div class="milestone">
-                                <span class="milestone-dot"></span>
-                                <span>Conclusiones</span>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <button onclick="openChatFromAssignment({{ assignment.id }})" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s ease;">
+                                    💬 Chat
+                                </button>
+                                <button onclick="showFilesModal({{ assignment.id }}, '{{ assignment.service.name }}', '{{ assignment.employee.get_full_name|default:assignment.employee.username }}')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s ease;">
+                                    📁 Archivos
+                                </button>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div style="text-align: center; padding: 40px; color: #999; background: white; border-radius: 12px;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">👨‍🏫</div>
+                            <p>No tienes asesorías asignadas aún</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Chat Section -->
+                <section class="folders-section" style="grid-column: span 2;">
+                    <h3 style="margin-bottom: 15px; color: #333;">💬 Chat con mis Asesores</h3>
+                    <div class="chat-container">
+                        <div class="chat-sidebar">
+                            <div class="chat-sidebar-header">
+                                <h3>Conversaciones</h3>
+                            </div>
+                            <div class="chat-conversations-list" id="chatConversationsList">
+                                <div style="padding: 20px; text-align: center; color: #a0aec0;">
+                                    <p>Cargando conversaciones...</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-main" id="chatMainArea" style="display: none;">
+                            <div class="chat-header">
+                                <div class="chat-header-info">
+                                    <h3>Selecciona una conversación</h3>
+                                    <p>Elige un asesor para comenzar a chatear</p>
+                                </div>
+                            </div>
+                            <div class="chat-messages" id="chatMessagesContainer">
+                                <div class="chat-empty-state">
+                                    <p>Selecciona una conversación para ver los mensajes</p>
+                                </div>
+                            </div>
+                            <div class="chat-input-container">
+                                <div class="chat-input-wrapper">
+                                    <textarea id="chatInput" class="chat-input" placeholder="Escribe tu mensaje..." rows="1"></textarea>
+                                    <button id="sendMessageBtn" class="chat-send-btn">Enviar</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- Folders Section -->
-                <section class="folders-section">
-                    <div class="folders-grid">
-                        <div class="folder-item completed">
-                            <div class="folder-icon">📁</div>
-                            <span>Capítulo 1</span>
-                        </div>
-                        <div class="folder-item completed">
-                            <div class="folder-icon">📁</div>
-                            <span>Capítulo 2</span>
-                        </div>
-                        <div class="folder-item completed">
-                            <div class="folder-icon">📁</div>
-                            <span>Capítulo 3</span>
-                        </div>
-                        <div class="folder-item active">
-                            <div class="folder-icon">📂</div>
-                            <span>Capítulo 4</span>
-                        </div>
-                        <div class="folder-item">
-                            <div class="folder-icon">📁</div>
-                            <span>Capítulo 5</span>
-                        </div>
-                        <div class="folder-item">
-                            <div class="folder-icon">📁</div>
-                            <span>Anexos</span>
-                        </div>
-                        <div class="folder-item">
-                            <div class="folder-icon">📁</div>
-                            <span>Referencias</span>
-                        </div>
-                        <div class="folder-item">
-                            <div class="folder-icon">📁</div>
-                            <span>Borrador Final</span>
-                        </div>
-                        <div class="folder-item">
-                            <div class="folder-icon">📁</div>
-                            <span>Presentación</span>
-                        </div>
-                        <div class="folder-item">
-                            <div class="folder-icon">📁</div>
-                            <span>Defensa</span>
-                        </div>
-                        <div class="folder-item">
-                            <div class="folder-icon">📁</div>
-                            <span>Documentos</span>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Calendar Section -->
+                <!-- Sessions Calendar -->
                 <section class="calendar-section">
                     <div class="calendar-header">
-                        <h3>PROGRESO DE TESIS</h3>
-                        <div class="calendar-controls">
-                            <select class="month-select">
-                                <option value="10">octubre</option>
-                                <option value="11">noviembre</option>
-                                <option value="12">diciembre</option>
-                            </select>
-                            <select class="year-select">
-                                <option value="2025">2025</option>
-                                <option value="2026">2026</option>
-                            </select>
-                            <button class="calendar-nav" data-dir="prev">‹</button>
-                            <button class="calendar-nav" data-dir="next">›</button>
-                        </div>
+                        <h3>📅 MIS SESIONES</h3>
                     </div>
                     
-                    <div class="calendar-location">América/Santiago</div>
-                    
-                    <div class="calendar-grid">
-                        <div class="calendar-header-days">
-                            <div>lun</div>
-                            <div>mar</div>
-                            <div>mié</div>
-                            <div>jue</div>
-                            <div>vie</div>
-                            <div>sáb</div>
-                            <div>dom</div>
+                    <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-height: 450px; overflow-y: auto; padding-right: 5px;">
+                        {% if sessions %}
+                            {% for session in sessions %}
+                            <div style="display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 8px; background: {% if session.status == 'completed' %}#e8f5e9{% elif session.status == 'cancelled' %}#ffebee{% else %}#e3f2fd{% endif %}; border-left: 4px solid {% if session.status == 'completed' %}#4CAF50{% elif session.status == 'cancelled' %}#f44336{% else %}#2196F3{% endif %};">
+                                <div style="font-size: 32px;">
+                                    {% if session.status == 'completed' %}✅
+                                    {% elif session.status == 'cancelled' %}❌
+                                    {% else %}📅{% endif %}
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0 0 5px 0; color: #333;">{{ session.assignment.service.name }}</h4>
+                                    <p style="margin: 0; color: #666; font-size: 14px;">
+                                        {{ session.scheduled_date|date:"d/m/Y" }} - {{ session.scheduled_date|time:"H:i" }}
+                                    </p>
+                                    <p style="margin: 5px 0 0 0; color: #999; font-size: 12px;">
+                                        Con: {{ session.assignment.employee.get_full_name|default:session.assignment.employee.username }}
+                                    </p>
+                                </div>
+                                <div style="padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; background: white;">
+                                    {% if session.status == 'completed' %}Completada
+                                    {% elif session.status == 'cancelled' %}Cancelada
+                                    {% elif session.status == 'confirmed' %}Confirmada
+                                    {% else %}Programada{% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <div style="text-align: center; padding: 40px; color: #999;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">📭</div>
+                            <p>No tienes sesiones programadas</p>
                         </div>
-                        <div class="calendar-days" id="calendarDays">
-                            <!-- Days will be generated by JavaScript -->
-                        </div>
+                        {% endif %}
                     </div>
                 </section>
             </div>
 
-            <!-- Messages and Notifications -->
-            <div class="messages-section">
-                <div class="message-card urgent">
-                    <div class="message-header">
-                        <span class="message-type">RECUERDA</span>
-                    </div>
-                    <div class="message-content">
-                        <h4>TU PRÓXIMA SESIÓN ES EN 21 DÍAS</h4>
-                    </div>
-                </div>
-
-                <div class="message-card info">
-                    <div class="message-header">
-                        <span class="message-label">Nuevo mensaje:</span>
-                    </div>
-                    <div class="message-content">
-                        <p>Muy buen progreso, pero recuerda revisar el material didáctico que te envié</p>
-                    </div>
-                </div>
-
-                <div class="message-card history">
-                    <div class="message-header">
-                        <span class="message-label">Mensajes anteriores:</span>
-                    </div>
-                    <div class="message-content">
-                        <p>Recuerda tomar descansos</p>
-                        <p class="message-detail">...</p>
-                        <p class="message-detail">La tesis no te detiene, tú la terminas.</p>
+            <!-- Next Session Alert -->
+            {% if next_session %}
+            <div class="messages-section" style="margin-top: 30px;">
+                <div class="message-card urgent" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="font-size: 48px;">🔔</div>
+                        <div>
+                            <h4 style="margin: 0 0 8px 0; font-size: 18px;">¡PRÓXIMA SESIÓN!</h4>
+                            <p style="margin: 0; font-size: 16px; opacity: 0.95;">
+                                {{ next_session.assignment.service.name }} - 
+                                {{ next_session.scheduled_date|date:"d/m/Y" }} a las {{ next_session.scheduled_date|time:"H:i" }}
+                            </p>
+                            {% if days_until_next is not None %}
+                            <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">
+                                {% if days_until_next == 0 %}
+                                    ¡Es hoy!
+                                {% elif days_until_next == 1 %}
+                                    Es mañana
+                                {% else %}
+                                    En {{ days_until_next }} días
+                                {% endif %}
+                            </p>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
 
-                <div class="achievement-card">
-                    <div class="achievement-icon">🏆</div>
-                    <div class="achievement-content">
-                        <h4>¡Logro Desbloqueado!</h4>
-                        <p>Has completado 3 capítulos consecutivos</p>
-                    </div>
+    <!-- Modal de Archivos -->
+    <div id="filesModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 15px; width: 90%; max-width: 700px; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="padding: 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div>
+                    <h2 style="margin: 0 0 5px 0; font-size: 24px;">📁 Archivos</h2>
+                    <p id="filesModalSubtitle" style="margin: 0; font-size: 14px; opacity: 0.9;"></p>
+                </div>
+                <button onclick="closeFilesModal()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
+                    ✕
+                </button>
+            </div>
+            <div style="padding: 25px; overflow-y: auto; flex: 1;">
+                <div style="margin-bottom: 20px;">
+                    <button id="uploadFileBtn" onclick="showUploadForm()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s ease;">
+                        ⬆️ Subir Archivo
+                    </button>
+                </div>
+                
+                <div id="uploadFormContainer" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 15px 0; color: #333;">Subir nuevo archivo</h4>
+                    <form id="uploadFileForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" id="uploadAssignmentId" name="assignment_id">
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 8px; color: #555; font-weight: 600;">Archivo:</label>
+                            <input type="file" name="file" required style="width: 100%; padding: 10px; border: 2px dashed #ccc; border-radius: 8px; background: white;">
+                            <small style="color: #666; display: block; margin-top: 5px;">Máximo 10MB</small>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 8px; color: #555; font-weight: 600;">Descripción:</label>
+                            <input type="text" name="description" placeholder="Ej: Tarea de matemáticas" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <button type="button" onclick="hideUploadForm()" style="background: #6c757d; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                Cancelar
+                            </button>
+                            <button type="submit" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                Subir
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="filesListContainer">
+                    <!-- La lista de archivos se cargará aquí -->
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/cliente-dashboard.js' %}"></script>
+<script>
+// Variables globales para el modal de archivos
+let currentAssignmentId = null;
+
+// Función para abrir el chat desde una asesoría
+function openChatFromAssignment(assignmentId) {
+    if (typeof chatSystem !== 'undefined') {
+        // Ocultar el modal de archivos si está abierto
+        closeFilesModal();
+        
+        // Abrir la conversación en el chat
+        chatSystem.openConversation(assignmentId);
+        
+        // Hacer scroll al chat
+        const chatSection = document.querySelector('.chat-container');
+        if (chatSection) {
+            chatSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+}
+
+// Función para mostrar el modal de archivos
+function showFilesModal(assignmentId, serviceName, employeeName) {
+    currentAssignmentId = assignmentId;
+    
+    const modal = document.getElementById('filesModal');
+    const subtitle = document.getElementById('filesModalSubtitle');
+    
+    subtitle.textContent = `${serviceName} con ${employeeName}`;
+    modal.style.display = 'flex';
+    
+    // Cargar los archivos de esta asesoría
+    loadAssignmentFiles(assignmentId);
+}
+
+// Función para cerrar el modal de archivos
+function closeFilesModal() {
+    document.getElementById('filesModal').style.display = 'none';
+    hideUploadForm();
+    currentAssignmentId = null;
+}
+
+// Función para mostrar el formulario de subida
+function showUploadForm() {
+    document.getElementById('uploadFormContainer').style.display = 'block';
+    document.getElementById('uploadAssignmentId').value = currentAssignmentId;
+}
+
+// Función para ocultar el formulario de subida
+function hideUploadForm() {
+    document.getElementById('uploadFormContainer').style.display = 'none';
+    document.getElementById('uploadFileForm').reset();
+}
+
+// Función para cargar archivos de una asesoría
+async function loadAssignmentFiles(assignmentId) {
+    const container = document.getElementById('filesListContainer');
+    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">⏳ Cargando archivos...</div>';
+    
+    try {
+        const response = await fetch(`/api/assignment/${assignmentId}/files/`);
+        const data = await response.json();
+        
+        if (data.success) {
+            if (data.files.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
+                        <p>No hay archivos aún</p>
+                        <p style="font-size: 14px;">Usa el botón "Subir Archivo" para agregar archivos</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = data.files.map(file => `
+                    <div class="archivo-item" data-file-id="${file.id}" style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee; display: flex; align-items: center; gap: 15px;">
+                        <div style="font-size: 32px;">📄</div>
+                        <div style="flex: 1;">
+                            <h5 style="margin: 0 0 5px 0; color: #333;">${escapeHtml(file.file_name)}</h5>
+                            <p style="margin: 0; color: #666; font-size: 13px;">
+                                ${file.description ? escapeHtml(file.description) + ' • ' : ''}
+                                ${file.file_size} • 
+                                Subido por ${escapeHtml(file.uploaded_by)} • 
+                                ${file.uploaded_at}
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="${file.file_url}" download style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                                ⬇️ Descargar
+                            </a>
+                            ${file.can_delete ? `
+                            <button onclick="deleteFile(${file.id}, '${escapeHtml(file.file_name)}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                                🗑️ Eliminar
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        } else {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #dc3545;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
+                    <p>Error al cargar archivos</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #dc3545;">
+                <div style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
+                <p>Error: ${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+// Función para eliminar archivo desde el modal
+async function deleteFile(fileId, fileName) {
+    if (!confirm(`¿Estás seguro de que deseas eliminar "${fileName}"?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/file/delete/${fileId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Recargar la lista de archivos
+            loadAssignmentFiles(currentAssignmentId);
+            alert('✅ Archivo eliminado exitosamente');
+        } else {
+            alert('❌ Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('❌ Error al eliminar archivo: ' + error.message);
+    }
+}
+
+// Manejar envío del formulario de subida desde el modal
+document.getElementById('uploadFileForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ Subiendo...';
+    
+    try {
+        const response = await fetch('{% url "upload_file" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('✅ Archivo subido exitosamente');
+            hideUploadForm();
+            loadAssignmentFiles(currentAssignmentId);
+        } else {
+            alert('❌ Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('❌ Error al subir archivo: ' + error.message);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Subir';
+    }
+});
+
+// Función helper para escapar HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('filesModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeFilesModal();
+    }
+});
+</script>
+<script src="{% static 'js/chat.js' %}"></script>
 {% endblock %}

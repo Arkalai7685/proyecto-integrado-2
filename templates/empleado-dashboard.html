@@ -7,6 +7,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/empleado-dashboard.css' %}?v=3.0">
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -15,6 +16,7 @@
             <!-- Tabs Navigation -->
             <div class="tabs-navigation">
                 <button class="tab-btn active" data-tab="estudiantes">ESTUDIANTES</button>
+                <button class="tab-btn" data-tab="chat">💬 CHAT</button>
                 <button class="tab-btn" data-tab="solicitudes">SOLICITUDES</button>
             </div>
 
@@ -56,6 +58,7 @@
                                             <div class="action-buttons">
                                                 <button class="ver-btn" onclick="verDetalleCliente({{ client_info.client.id }})">VER</button>
                                                 <button class="auditoria-btn" onclick="window.location.href='{% url 'auditoria_estudiante' %}?client={{ client_info.client.id }}'">AUDITORÍA</button>
+                                                <button class="btn-ver-archivos" data-client-id="{{ client_info.client.id }}">ARCHIVOS</button>
                                             </div>
                                         </div>
                                         <div class="progress-bar-container">
@@ -101,85 +104,87 @@
                     </div>
                 </div>
 
+                <!-- Chat Tab -->
+                <div class="tab-content" id="chat-tab">
+                    <div class="chat-container">
+                        <div class="chat-sidebar">
+                            <div class="chat-sidebar-header">
+                                <h3>💬 Conversaciones</h3>
+                                <span class="unread-badge" id="unreadBadge">0</span>
+                            </div>
+                            <div class="conversations-list" id="chatConversationsList">
+                                <!-- Las conversaciones se cargarán aquí dinámicamente -->
+                            </div>
+                        </div>
+                        <div class="chat-main">
+                            <div class="chat-header">
+                                <div id="chatHeaderInfo">
+                                    <h3>Selecciona una conversación</h3>
+                                </div>
+                            </div>
+                            <div class="chat-messages" id="chatMessagesContainer">
+                                <!-- Los mensajes se cargarán aquí -->
+                            </div>
+                            <div class="chat-input-area" id="chatInputArea" style="display: none;">
+                                <input type="text" id="chatInput" placeholder="Escribe un mensaje..." />
+                                <button id="sendMessageBtn">Enviar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Solicitudes Tab -->
                 <div class="tab-content" id="solicitudes-tab">
                     <div class="solicitudes-container">
                         <div class="solicitudes-header">
                             <h3>Nuevas Solicitudes de Asesoría</h3>
-                            <span class="solicitudes-count">4 pendientes</span>
+                            <span class="solicitudes-count">{{ pending_requests_count }} pendiente{{ pending_requests_count|pluralize }}</span>
                         </div>
                         
                         <div class="solicitudes-list">
-                            <div class="solicitud-item">
-                                <div class="solicitud-info">
-                                    <div class="solicitud-avatar">
-                                        <img src="{% static 'images/personal/student5.jpg' %}" alt="Laura Silva">
+                            {% if pending_requests %}
+                                {% for order in pending_requests %}
+                                <div class="solicitud-item" data-order-id="{{ order.id }}">
+                                    <div class="solicitud-info">
+                                        <div class="solicitud-avatar">
+                                            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
+                                                {{ order.customer.name|first|upper }}
+                                            </div>
+                                        </div>
+                                        <div class="solicitud-details">
+                                            <h4>{{ order.customer.name }}</h4>
+                                            <p>
+                                                <strong>{{ order.service.name }}</strong> - {{ order.price.plan }}
+                                                {% if order.notes %}
+                                                <br><span style="font-size: 13px; color: #666;">{{ order.notes|truncatewords:15 }}</span>
+                                                {% endif %}
+                                            </p>
+                                            <span class="solicitud-time">
+                                                {{ order.created_at|timesince }} atrás
+                                                {% if order.start_date %}
+                                                    • Inicio: {{ order.start_date|date:"d/m/Y" }}
+                                                {% endif %}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div class="solicitud-details">
-                                        <h4>Laura Silva</h4>
-                                        <p>Necesita ayuda con metodología de investigación</p>
-                                        <span class="solicitud-time">Hace 2 horas</span>
-                                    </div>
-                                </div>
-                                <div class="solicitud-actions">
-                                    <button class="accept-btn">Aceptar</button>
-                                    <button class="decline-btn">Rechazar</button>
-                                </div>
-                            </div>
-
-                            <div class="solicitud-item">
-                                <div class="solicitud-info">
-                                    <div class="solicitud-avatar">
-                                        <img src="{% static 'images/personal/student6.jpg' %}" alt="Miguel Torres">
-                                    </div>
-                                    <div class="solicitud-details">
-                                        <h4>Miguel Torres</h4>
-                                        <p>Revisión de marco teórico y referencias bibliográficas</p>
-                                        <span class="solicitud-time">Hace 5 horas</span>
-                                    </div>
-                                </div>
-                                <div class="solicitud-actions">
-                                    <button class="accept-btn">Aceptar</button>
-                                    <button class="decline-btn">Rechazar</button>
-                                </div>
-                            </div>
-
-                            <div class="solicitud-item">
-                                <div class="solicitud-info">
-                                    <div class="solicitud-avatar">
-                                        <img src="{% static 'images/personal/student7.jpg' %}" alt="Sofia Mendez">
-                                    </div>
-                                    <div class="solicitud-details">
-                                        <h4>Sofia Mendez</h4>
-                                        <p>Apoyo en análisis de datos cuantitativos</p>
-                                        <span class="solicitud-time">Ayer</span>
+                                    <div class="solicitud-actions">
+                                        <button class="accept-btn" onclick="acceptRequest({{ order.id }})">Aceptar</button>
+                                        <button class="decline-btn" onclick="rejectRequest({{ order.id }})">Rechazar</button>
                                     </div>
                                 </div>
-                                <div class="solicitud-actions">
-                                    <button class="accept-btn">Aceptar</button>
-                                    <button class="decline-btn">Rechazar</button>
+                                {% endfor %}
+                            {% else %}
+                                <div style="text-align: center; padding: 60px 20px;">
+                                    <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;">📋</div>
+                                    <h3 style="color: #666; margin-bottom: 10px;">No hay solicitudes pendientes</h3>
+                                    <p style="color: #999;">Cuando el administrador te asigne nuevas solicitudes, aparecerán aquí.</p>
                                 </div>
-                            </div>
-
-                            <div class="solicitud-item">
-                                <div class="solicitud-info">
-                                    <div class="solicitud-avatar">
-                                        <img src="{% static 'images/personal/student8.jpg' %}" alt="Roberto Herrera">
-                                    </div>
-                                    <div class="solicitud-details">
-                                        <h4>Roberto Herrera</h4>
-                                        <p>Preparación para defensa de tesis</p>
-                                        <span class="solicitud-time">Hace 2 días</span>
-                                    </div>
-                                </div>
-                                <div class="solicitud-actions">
-                                    <button class="accept-btn">Aceptar</button>
-                                    <button class="decline-btn">Rechazar</button>
-                                </div>
-                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+
+                <!-- Archivos Tab - ELIMINADO, ahora se accede desde botón en tarjeta de estudiante -->
             </div>
 
             <!-- Dashboard Grid -->
@@ -307,6 +312,69 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Sección de Archivos Compartidos -->
+            <div style="margin-top: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; color: #333; font-size: 20px;">📁 Archivos Compartidos</h3>
+                    <button onclick="mostrarFormularioSubirArchivo()" class="btn-primary" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <span>📤</span> Compartir Archivo
+                    </button>
+                </div>
+
+                <!-- Formulario para subir archivos -->
+                <div id="formularioSubirArchivo" style="display: none; background: #f8f9fa; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 2px dashed #4CAF50;">
+                    <h4 style="margin: 0 0 15px 0; color: #333;">📤 Compartir Archivo con Cliente</h4>
+                    <form id="uploadFileForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div style="display: grid; gap: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">* Cliente</label>
+                                <select name="assignment_id" id="assignment_id" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                                    <option value="">Selecciona un cliente</option>
+                                    {% for client_data in clients_data %}
+                                    <option value="{{ client_data.assignment.id }}">
+                                        {{ client_data.client.get_full_name }} - {{ client_data.service.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">* Archivo</label>
+                                <input type="file" name="file" id="file" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                                <small style="color: #666; margin-top: 5px; display: block;">
+                                    Formatos permitidos: PDF, DOC, DOCX, TXT, JPG, PNG, MP3, MP4, ZIP (máx. 10MB)
+                                </small>
+                            </div>
+
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Descripción</label>
+                                <textarea name="description" id="description" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" placeholder="Descripción opcional del archivo..."></textarea>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                                <button type="button" onclick="ocultarFormularioSubirArchivo()" style="padding: 10px 20px; background: #ccc; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                                    Cancelar
+                                </button>
+                                <button type="submit" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <span>📤</span> Compartir
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Lista de archivos -->
+                <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div id="listaArchivos" style="display: grid; gap: 10px;">
+                        <div style="text-align: center; padding: 40px; color: #999;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
+                            <p>Cargando archivos...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -350,7 +418,8 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/empleado-dashboard.js' %}?v=3.0"></script>
+<script src="{% static 'js/empleado-dashboard.js' %}?v=13.0"></script>
+<script src="{% static 'js/chat.js' %}"></script>
 <script>
 // FORZAR actualización de barras de progreso al cargar la página
 window.addEventListener('load', function() {
@@ -390,6 +459,8 @@ function verDetalleCliente(clientId) {
                         </div>
                         <h3 style="margin: 0; font-size: 20px; color: #333;">${data.client.name}</h3>
                         <p style="color: #666; font-size: 14px; margin: 5px 0 0 0;">${data.client.email}</p>
+                        ${data.client.phone ? `<p style="color: #666; font-size: 13px; margin: 3px 0 0 0;">📞 ${data.client.phone}</p>` : ''}
+                        ${data.client.address ? `<p style="color: #666; font-size: 13px; margin: 3px 0 0 0;">📍 ${data.client.address}</p>` : ''}
                     </div>
                     
                     <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
@@ -468,5 +539,140 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
+// ============= FUNCIONES DE GESTIÓN DE ARCHIVOS =============
+
+function mostrarFormularioSubirArchivo() {
+    document.getElementById('formularioSubirArchivo').style.display = 'block';
+    document.getElementById('formularioSubirArchivo').scrollIntoView({ behavior: 'smooth' });
+}
+
+function ocultarFormularioSubirArchivo() {
+    document.getElementById('formularioSubirArchivo').style.display = 'none';
+    document.getElementById('uploadFileForm').reset();
+}
+
+// Manejar envío del formulario de subida de archivos
+document.getElementById('uploadFileForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>⏳</span> Subiendo...';
+    
+    try {
+        const response = await fetch('{% url "upload_file" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('✅ Archivo compartido exitosamente');
+            ocultarFormularioSubirArchivo();
+            cargarArchivos(); // Recargar lista de archivos
+        } else {
+            alert('❌ Error: ' + data.error);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>📤</span> Compartir';
+        }
+    } catch (error) {
+        alert('❌ Error al subir archivo: ' + error.message);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>📤</span> Compartir';
+    }
+});
+
+async function cargarArchivos() {
+    try {
+        const response = await fetch('{% url "list_files" %}');
+        const data = await response.json();
+        
+        const listaArchivos = document.getElementById('listaArchivos');
+        
+        if (data.success && data.files.length > 0) {
+            listaArchivos.innerHTML = data.files.map(file => {
+                let icon = '📎';
+                if (file.file_type === 'document') icon = '📄';
+                else if (file.file_type === 'image') icon = '🖼️';
+                else if (file.file_type === 'audio') icon = '🎵';
+                else if (file.file_type === 'video') icon = '🎬';
+                
+                return `
+                    <div class="archivo-item" data-file-id="${file.id}" style="display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 8px; background: #f8f9fa; border: 1px solid #e0e0e0;">
+                        <div style="font-size: 28px;">${icon}</div>
+                        <div style="flex: 1;">
+                            <h5 style="margin: 0 0 5px 0; color: #333; font-size: 15px;">${file.file_name}</h5>
+                            <p style="margin: 0; color: #666; font-size: 13px;">
+                                ${file.file_size} • Subido por ${file.uploaded_by}
+                            </p>
+                            <p style="margin: 3px 0 0 0; color: #999; font-size: 12px;">
+                                ${file.uploaded_at} • Para: ${file.assignment_client} (${file.assignment_service})
+                            </p>
+                            ${file.description ? `<p style="margin: 5px 0 0 0; color: #555; font-size: 12px; font-style: italic;">"${file.description}"</p>` : ''}
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <a href="/api/file/download/${file.id}/" class="btn-secondary" style="padding: 8px 15px; text-decoration: none; border-radius: 6px; font-size: 13px; background: #2196F3; color: white; display: flex; align-items: center; gap: 5px;">
+                                <span>⬇️</span> Descargar
+                            </a>
+                            ${file.can_delete ? `
+                            <button onclick="eliminarArchivo(${file.id}, '${file.file_name.replace(/'/g, "\\'")}')" style="padding: 8px 15px; background: #f44336; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 5px;">
+                                <span>🗑️</span> Eliminar
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            listaArchivos.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
+                    <p>No hay archivos compartidos aún</p>
+                    <p style="font-size: 14px; color: #666;">Usa el botón "Compartir Archivo" para enviar documentos a tus clientes</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error al cargar archivos:', error);
+    }
+}
+
+async function eliminarArchivo(fileId, fileName) {
+    if (!confirm(`¿Estás seguro de que deseas eliminar "${fileName}"?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/file/delete/${fileId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('✅ Archivo eliminado exitosamente');
+            cargarArchivos(); // Recargar lista
+        } else {
+            alert('❌ Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('❌ Error al eliminar archivo: ' + error.message);
+    }
+}
+
+// Cargar archivos al cargar la página
+window.addEventListener('DOMContentLoaded', function() {
+    cargarArchivos();
+});
 </script>
 {% endblock %}

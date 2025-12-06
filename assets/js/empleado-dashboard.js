@@ -1,10 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
     initializeTabs();
     initializeStudentProgressBars();
-    initializeEmployeeCalendar();
+    // initializeEmployeeCalendar(); // Comentado temporalmente
     initializeFolders();
     initializeSolicitudes();
     initializeStudentCards();
+    
+    // Event delegation para botones ARCHIVOS
+    document.body.addEventListener('click', (e) => {
+        if (e.target.classList.contains('btn-ver-archivos')) {
+            e.preventDefault();
+            const clientId = e.target.getAttribute('data-client-id');
+            console.log('Click en ARCHIVOS, clientId:', clientId);
+            if (clientId) {
+                verArchivosCliente(parseInt(clientId));
+            }
+        }
+    });
 });
 
 function initializeTabs() {
@@ -265,42 +277,109 @@ function initializeFolders() {
 }
 
 function initializeSolicitudes() {
-    const acceptBtns = document.querySelectorAll('.accept-btn');
-    const declineBtns = document.querySelectorAll('.decline-btn');
+    // Las solicitudes ahora se manejan con las funciones globales acceptRequest y rejectRequest
+    // que están definidas más abajo
+}
+
+// Función global para aceptar solicitud
+function acceptRequest(orderId) {
+    if (!confirm('¿Estás seguro de que deseas aceptar esta solicitud?')) {
+        return;
+    }
     
-    acceptBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const solicitudItem = btn.closest('.solicitud-item');
-            const studentName = solicitudItem.querySelector('h4').textContent;
-            
-            solicitudItem.style.transform = 'translateX(-100%)';
-            solicitudItem.style.opacity = '0';
-            
-            setTimeout(() => {
-                solicitudItem.remove();
-                updateSolicitudesCount();
-                showNotification(`Solicitud de ${studentName} aceptada`, 'success');
-            }, 300);
-        });
+    fetch(`/accept-request/${orderId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const solicitudItem = document.querySelector(`[data-order-id="${orderId}"]`);
+            if (solicitudItem) {
+                solicitudItem.style.transform = 'translateX(-100%)';
+                solicitudItem.style.opacity = '0';
+                
+                setTimeout(() => {
+                    solicitudItem.remove();
+                    updateSolicitudesCount();
+                    showNotification(data.message || 'Solicitud aceptada exitosamente', 'success');
+                }, 300);
+            }
+        } else {
+            showNotification(data.error || 'Error al aceptar la solicitud', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error de conexión al aceptar la solicitud', 'error');
     });
+}
+
+// Función global para rechazar solicitud
+function rejectRequest(orderId) {
+    const reason = prompt('Por favor, indica la razón del rechazo:');
     
-    declineBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const solicitudItem = btn.closest('.solicitud-item');
-            const studentName = solicitudItem.querySelector('h4').textContent;
-            
-            solicitudItem.style.transform = 'translateX(100%)';
-            solicitudItem.style.opacity = '0';
-            
-            setTimeout(() => {
-                solicitudItem.remove();
-                updateSolicitudesCount();
-                showNotification(`Solicitud de ${studentName} rechazada`, 'error');
-            }, 300);
-        });
+    if (reason === null) {
+        return; // Usuario canceló
+    }
+    
+    if (!reason.trim()) {
+        showNotification('Debes proporcionar una razón para el rechazo', 'error');
+        return;
+    }
+    
+    fetch(`/reject-request/${orderId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify({
+            reason: reason
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const solicitudItem = document.querySelector(`[data-order-id="${orderId}"]`);
+            if (solicitudItem) {
+                solicitudItem.style.transform = 'translateX(100%)';
+                solicitudItem.style.opacity = '0';
+                
+                setTimeout(() => {
+                    solicitudItem.remove();
+                    updateSolicitudesCount();
+                    showNotification(data.message || 'Solicitud rechazada', 'success');
+                }, 300);
+            }
+        } else {
+            showNotification(data.error || 'Error al rechazar la solicitud', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error de conexión al rechazar la solicitud', 'error');
     });
+}
+
+// Función auxiliar para obtener el token CSRF
+function getCsrfToken() {
+    const name = 'csrftoken';
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
 function updateSolicitudesCount() {
@@ -335,7 +414,8 @@ function initializeStudentCards() {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const studentCard = btn.closest('.student-card');
-            const studentName = studentCard.querySelector('.avatar-img').alt;
+            const studentNameElement = studentCard.querySelector('.student-name');
+            const studentName = studentNameElement ? studentNameElement.textContent.trim() : 'Cliente';
             
             showStudentDetails(studentName, studentCard);
         });
@@ -444,28 +524,6 @@ function showNotification(message, type = 'info') {
         }, 300);
     }, 3000);
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const studentCards = document.querySelectorAll('.student-card');
-    const folders = document.querySelectorAll('.folder-item');
-    
-    studentCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'all 0.6s ease';
-    });
-    
-    folders.forEach(folder => {
-        folder.style.opacity = '0';
-        folder.style.transform = 'translateY(20px)';
-        folder.style.transition = 'all 0.5s ease';
-    });
-    
-    setTimeout(() => {
-        animateStats();
-    }, 1000);
-});
-
 function animateStats() {
     const statNumbers = document.querySelectorAll('.stat-info h4');
     
@@ -488,4 +546,205 @@ function animateStats() {
             }
         }, 30);
     });
+}
+
+// Funciones para manejar archivos de clientes
+// Función para ver archivos de un cliente específico
+function verArchivosCliente(clientId) {
+    // Crear modal
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 3000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        max-width: 900px;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        position: relative;
+    `;
+    
+    // Crear header del modal
+    const modalHeader = document.createElement('div');
+    modalHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #667eea; padding-bottom: 15px;';
+    
+    const modalTitle = document.createElement('h3');
+    modalTitle.style.cssText = 'margin: 0; color: #2c3e50;';
+    modalTitle.textContent = '📎 Archivos del Cliente';
+    
+    const closeButton = document.createElement('button');
+    closeButton.style.cssText = 'background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 20px; line-height: 1; font-weight: bold;';
+    closeButton.innerHTML = '&times;';
+    closeButton.onclick = () => modal.remove();
+    
+    modalHeader.appendChild(modalTitle);
+    modalHeader.appendChild(closeButton);
+    
+    // Crear contenedor de archivos
+    const filesList = document.createElement('div');
+    filesList.id = 'modal-files-list';
+    filesList.style.minHeight = '200px';
+    filesList.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+            <div style="font-size: 48px; margin-bottom: 15px;">⌛</div>
+            <p>Cargando archivos...</p>
+        </div>
+    `;
+    
+    modalContent.appendChild(modalHeader);
+    modalContent.appendChild(filesList);
+    
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    
+    // Cerrar modal al hacer clic fuera
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+    
+    // Cargar archivos del cliente específico
+    fetch(`/api/file/list/?client_id=${clientId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Respuesta de API:', data);
+        const filesList = document.getElementById('modal-files-list');
+        filesList.innerHTML = '';
+        
+        if (data.files && data.files.length > 0) {
+            const container = document.createElement('div');
+            container.style.cssText = 'display: grid; gap: 12px;';
+            
+            data.files.forEach(file => {
+                const fileCard = document.createElement('div');
+                fileCard.style.cssText = 'background: #f8f9fa; padding: 18px; border-radius: 12px; border-left: 4px solid #667eea; transition: all 0.3s; cursor: pointer;';
+                fileCard.addEventListener('mouseover', () => {
+                    fileCard.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    fileCard.style.transform = 'translateY(-2px)';
+                });
+                fileCard.addEventListener('mouseout', () => {
+                    fileCard.style.boxShadow = '';
+                    fileCard.style.transform = '';
+                });
+                
+                const flexContainer = document.createElement('div');
+                flexContainer.style.cssText = 'display: flex; gap: 15px; align-items: start;';
+                
+                const iconDiv = document.createElement('div');
+                iconDiv.style.cssText = 'font-size: 36px; flex-shrink: 0;';
+                iconDiv.textContent = getFileIcon(file.file_type);
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.style.cssText = 'flex: 1; min-width: 0;';
+                
+                const headerDiv = document.createElement('div');
+                headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;';
+                
+                const fileName = document.createElement('h4');
+                fileName.style.cssText = 'margin: 0; color: #2c3e50; font-size: 15px; word-break: break-word;';
+                fileName.textContent = file.file_name;
+                
+                const fileSize = document.createElement('span');
+                fileSize.style.cssText = 'background: #667eea; color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; white-space: nowrap; margin-left: 10px;';
+                fileSize.textContent = file.file_size;
+                
+                headerDiv.appendChild(fileName);
+                headerDiv.appendChild(fileSize);
+                
+                const serviceDiv = document.createElement('div');
+                serviceDiv.style.cssText = 'color: #666; font-size: 13px; margin-bottom: 8px;';
+                serviceDiv.innerHTML = '<strong>Servicio:</strong> ' + file.assignment_service;
+                
+                const actionsDiv = document.createElement('div');
+                actionsDiv.style.cssText = 'display: flex; gap: 10px; align-items: center; flex-wrap: wrap;';
+                
+                const dateSpan = document.createElement('span');
+                dateSpan.style.cssText = 'color: #999; font-size: 12px;';
+                dateSpan.textContent = '📅 ' + file.uploaded_at;
+                
+                const userSpan = document.createElement('span');
+                userSpan.style.cssText = 'color: #999; font-size: 12px;';
+                userSpan.textContent = '👤 ' + file.uploaded_by;
+                
+                const downloadBtn = document.createElement('button');
+                downloadBtn.style.cssText = 'background: #27ae60; color: white; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; margin-left: auto;';
+                downloadBtn.textContent = '⬇️ Descargar';
+                downloadBtn.addEventListener('click', () => downloadFile(file.id));
+                
+                actionsDiv.appendChild(dateSpan);
+                actionsDiv.appendChild(userSpan);
+                actionsDiv.appendChild(downloadBtn);
+                
+                contentDiv.appendChild(headerDiv);
+                contentDiv.appendChild(serviceDiv);
+                
+                if (file.description) {
+                    const descDiv = document.createElement('div');
+                    descDiv.style.cssText = 'color: #888; font-size: 12px; margin-bottom: 8px; font-style: italic;';
+                    descDiv.textContent = file.description;
+                    contentDiv.appendChild(descDiv);
+                }
+                
+                contentDiv.appendChild(actionsDiv);
+                
+                flexContainer.appendChild(iconDiv);
+                flexContainer.appendChild(contentDiv);
+                fileCard.appendChild(flexContainer);
+                container.appendChild(fileCard);
+            });
+            
+            filesList.appendChild(container);
+        } else {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.style.cssText = 'text-align: center; padding: 50px 20px;';
+            emptyDiv.innerHTML = '<div style="font-size: 56px; margin-bottom: 15px; opacity: 0.3;">📁</div><h3 style="color: #666; margin-bottom: 10px;">No hay archivos</h3><p style="color: #999;">Este cliente aún no ha enviado archivos</p>';
+            filesList.appendChild(emptyDiv);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const filesList = document.getElementById('modal-files-list');
+        filesList.innerHTML = '';
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'text-align: center; padding: 50px 20px;';
+        errorDiv.innerHTML = '<div style="font-size: 56px; margin-bottom: 15px;">❌</div><h3 style="color: #e74c3c; margin-bottom: 10px;">Error al cargar archivos</h3><p style="color: #999;">Hubo un problema al obtener los archivos. Por favor, intenta de nuevo.</p>';
+        filesList.appendChild(errorDiv);
+    });
+}
+
+function getFileIcon(fileType) {
+    const icons = {
+        'document': '📄',
+        'image': '🖼️',
+        'audio': '🎵',
+        'video': '🎬',
+        'other': '📎'
+    };
+    return icons[fileType] || icons['other'];
+}
+
+function downloadFile(fileId) {
+    window.location.href = `/api/file/download/${fileId}/`;
 }

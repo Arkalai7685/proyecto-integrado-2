@@ -3,9 +3,11 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django_ratelimit.decorators import ratelimit
 from .forms import SecureUserCreationForm
 
 
+@ratelimit(key='ip', rate='50/15m', method='POST', block=True)
 def login_view(request):
     """Vista de login"""
     # Obtener información del servicio pendiente
@@ -118,6 +120,7 @@ def logout_view(request):
     return redirect('login')
 
 
+@ratelimit(key='ip', rate='50/15m', method='POST', block=True)
 def register_view(request):
     """Vista de registro de nuevos usuarios con validación de contraseñas seguras"""
     if request.user.is_authenticated:

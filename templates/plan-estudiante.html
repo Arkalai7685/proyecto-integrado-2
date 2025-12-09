@@ -14,7 +14,11 @@
         <div class="plans-grid">
             {% for price in prices %}
             <div class="plan-card">
-                <img src="{% static 'images/student-basic.jpg' %}" alt="{{ price.plan }}" class="plan-image">
+                {% if price.image %}
+                    <img src="{% static 'images/' %}{{ price.image }}" alt="{{ price.plan }}" class="plan-image">
+                {% else %}
+                    <img src="{% static 'images/student-basic.jpg' %}" alt="{{ price.plan }}" class="plan-image">
+                {% endif %}
                 <h3>{{ price.plan }}</h3>
                 <span class="plan-price">${{ price.price|floatformat:0 }}</span>
                 <p>{{ price.description }}</p>

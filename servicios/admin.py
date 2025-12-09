@@ -11,11 +11,23 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(Price)
 class PriceAdmin(admin.ModelAdmin):
-    list_display = ['service', 'plan', 'price', 'currency', 'is_featured', 'created_at']
+    list_display = ['service', 'plan', 'price', 'currency', 'image', 'is_featured', 'created_at']
     list_filter = ['service', 'currency', 'is_featured']
     search_fields = ['plan', 'description']
-    list_editable = ['is_featured']
+    list_editable = ['is_featured', 'image']
     actions = ['mark_as_featured', 'unmark_as_featured']
+    fieldsets = (
+        ('Información del Plan', {
+            'fields': ('service', 'plan', 'price', 'currency', 'description')
+        }),
+        ('Configuración de Sesiones', {
+            'fields': ('number_of_sessions', 'tutoring_sessions', 'therapy_sessions')
+        }),
+        ('Visualización', {
+            'fields': ('image', 'is_featured'),
+            'description': 'Imagen: nombre del archivo en assets/images/ (ej: imagen tutir.jpg, imagen terapia.jpg, plan estudiante.jpg)'
+        }),
+    )
     
     def mark_as_featured(self, request, queryset):
         """Marcar planes seleccionados como destacados"""

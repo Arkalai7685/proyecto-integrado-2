@@ -6,7 +6,7 @@
 {% block body_class %}psicologo-dashboard{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/psicologo-dashboard.css' %}?v=4.0">
+<link rel="stylesheet" href="{% static 'css/psicologo-dashboard.css' %}?v=5.0">
 <link rel="stylesheet" href="{% static 'css/chat.css' %}">
 {% endblock %}
 
@@ -109,7 +109,7 @@
                                     <div style="font-size: 13px; color: #666; margin-bottom: 10px;">
                                         {{ client_info.client.email }}
                                     </div>
-                                    <div style="font-size: 12px; color: #999; margin-bottom: 5px;">
+                                    <div style="font-size: 12px; color: #ffffff; margin-bottom: 5px;">
                                         📅 Sesiones: {{ client_info.completed_sessions }}/{{ client_info.total_sessions }}
                                     </div>
                                     {% if client_info.next_appointment %}
@@ -118,7 +118,7 @@
                                     </div>
                                     {% endif %}
                                     {% if client_info.last_activity %}
-                                    <div style="font-size: 11px; color: #999; margin-bottom: 10px;">
+                                    <div style="font-size: 11px; color: #ffffff; margin-bottom: 10px;">
                                         ⏰ Última actividad: {{ client_info.last_activity|timesince }} atrás
                                     </div>
                                     {% endif %}
@@ -164,7 +164,7 @@
                             <div class="chat-sidebar-header">
                                 <h3>Mis Clientes</h3>
                             </div>
-                            <div class="chat-conversations-list" id="chatConversationsList">
+                            <div class="conversations-list" id="chatConversationsList">
                                 <div style="padding: 20px; text-align: center; color: #a0aec0;">
                                     <p>Cargando conversaciones...</p>
                                 </div>
@@ -418,7 +418,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/psicologo-dashboard.js' %}?v=13.0"></script>
+<script src="{% static 'js/psicologo-dashboard.js' %}?v=17.0"></script>
 <script src="{% static 'js/chat.js' %}"></script>
 <script>
 // Función para ver detalles del cliente

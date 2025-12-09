@@ -122,20 +122,23 @@ def download_file(request, file_id):
         file_upload = get_object_or_404(FileUpload, id=file_id)
         
         # Verificar permisos
-        user_profile = request.user.profile
         assignment = file_upload.assignment
         
         has_permission = False
-        if user_profile.user_type == 'cliente' and assignment.client == request.user:
+        
+        # Cliente: puede descargar si es su asignación
+        if assignment.client == request.user:
             has_permission = True
-        elif user_profile.user_type in ['tutor', 'psicologo'] and assignment.employee == request.user:
+        # Empleado: puede descargar si es el empleado asignado
+        elif assignment.employee == request.user:
             has_permission = True
-        elif user_profile.user_type == 'admin':
+        # Admin/Staff: puede descargar todo
+        elif request.user.is_staff or request.user.is_superuser:
             has_permission = True
         
         if not has_permission:
-            messages.error(request, 'No tienes permiso para descargar este archivo')
-            return redirect('cliente_dashboard' if user_profile.user_type == 'cliente' else 'empleado_dashboard')
+            from django.http import HttpResponseForbidden
+            return HttpResponseForbidden('No tienes permiso para descargar este archivo')
         
         # Registrar descarga en auditoría
         AuditLog.objects.create(
@@ -152,11 +155,11 @@ def download_file(request, file_id):
         return response
         
     except FileUpload.DoesNotExist:
-        messages.error(request, 'Archivo no encontrado')
-        return redirect('cliente_dashboard')
+        from django.http import HttpResponseNotFound
+        return HttpResponseNotFound('Archivo no encontrado')
     except Exception as e:
-        messages.error(request, f'Error al descargar archivo: {str(e)}')
-        return redirect('cliente_dashboard')
+        from django.http import HttpResponseServerError
+        return HttpResponseServerError(f'Error al descargar archivo: {str(e)}')
 
 
 @login_required

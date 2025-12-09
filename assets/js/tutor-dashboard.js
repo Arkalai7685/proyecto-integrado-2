@@ -401,7 +401,6 @@ function updateSolicitudesCount() {
 
 function initializeStudentCards() {
     const studentCards = document.querySelectorAll('.student-card');
-    const verBtns = document.querySelectorAll('.ver-btn');
     
     studentCards.forEach((card, index) => {
         setTimeout(() => {
@@ -410,77 +409,9 @@ function initializeStudentCards() {
         }, index * 200);
     });
     
-    verBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const studentCard = btn.closest('.student-card');
-            const studentNameElement = studentCard.querySelector('.student-name');
-            const studentName = studentNameElement ? studentNameElement.textContent.trim() : 'Cliente';
-            
-            showStudentDetails(studentName, studentCard);
-        });
-    });
-}
-
-function showStudentDetails(studentName, studentCard) {
-    const progressBar = studentCard.querySelector('.progress-bar');
-    const progress = progressBar.getAttribute('data-progress');
-    
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 3000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    `;
-    
-    modal.innerHTML = `
-        <div style="
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 90%;
-        ">
-            <h3 style="margin: 0 0 20px 0; color: #2c3e50;">Detalles de ${studentName}</h3>
-            <div style="margin-bottom: 15px;">
-                <strong>Progreso actual:</strong> ${progress}%
-            </div>
-            <div style="margin-bottom: 15px;">
-                <strong>Última sesión:</strong> Hace 3 días
-            </div>
-            <div style="margin-bottom: 15px;">
-                <strong>Próxima cita:</strong> 25 de octubre, 2025
-            </div>
-            <div style="margin-bottom: 20px;">
-                <strong>Estado:</strong> <span style="color: #27ae60;">Activo</span>
-            </div>
-            <button onclick="this.closest('div').parentElement.remove()" style="
-                background: #f39c12;
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: 600;
-                width: 100%;
-            ">Cerrar</button>
-        </div>
-    `;
-    
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.remove();
-        }
-    });
-    
-    document.body.appendChild(modal);
+    // Ya no necesitamos el event listener en los botones VER
+    // porque se usa onclick="verDetalleCliente()" en el HTML
+    // que llama a la función definida en tutor-dashboard.html
 }
 
 function showNotification(message, type = 'info') {
@@ -595,6 +526,21 @@ function verArchivosCliente(clientId) {
     modalHeader.appendChild(modalTitle);
     modalHeader.appendChild(closeButton);
     
+    // Crear formulario de subida de archivos
+    const uploadSection = document.createElement('div');
+    uploadSection.style.cssText = 'background: #f0f4ff; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 2px dashed #667eea;';
+    uploadSection.innerHTML = `
+        <h4 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px;">📤 Subir nuevo archivo</h4>
+        <form id="uploadFileForm-${clientId}" style="display: grid; gap: 12px;">
+            <input type="file" id="fileInput-${clientId}" name="file" required style="padding: 10px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer;">
+            <textarea id="fileDescription-${clientId}" name="description" placeholder="Descripción del archivo (opcional)" rows="2" style="padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical;"></textarea>
+            <button type="submit" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s; box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);">
+                <span style="font-size: 18px;">⬆</span> Subir Archivo
+            </button>
+        </form>
+        <div id="uploadStatus-${clientId}" style="margin-top: 10px; display: none;"></div>
+    `;
+    
     // Crear contenedor de archivos
     const filesList = document.createElement('div');
     filesList.id = 'modal-files-list';
@@ -607,10 +553,103 @@ function verArchivosCliente(clientId) {
     `;
     
     modalContent.appendChild(modalHeader);
+    modalContent.appendChild(uploadSection);
     modalContent.appendChild(filesList);
     
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
+    
+    // Manejar envío del formulario de subida
+    const uploadForm = document.getElementById(`uploadFileForm-${clientId}`);
+    uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const fileInput = document.getElementById(`fileInput-${clientId}`);
+        const descriptionInput = document.getElementById(`fileDescription-${clientId}`);
+        const statusDiv = document.getElementById(`uploadStatus-${clientId}`);
+        
+        if (!fileInput.files.length) {
+            statusDiv.style.display = 'block';
+            statusDiv.style.cssText = 'margin-top: 10px; padding: 10px; background: #fee; border-radius: 8px; color: #c00;';
+            statusDiv.textContent = '⚠ Por favor selecciona un archivo';
+            return;
+        }
+        
+        // Mostrar estado de carga
+        statusDiv.style.display = 'block';
+        statusDiv.style.cssText = 'margin-top: 10px; padding: 10px; background: #e3f2fd; border-radius: 8px; color: #1976d2;';
+        statusDiv.textContent = '⏳ Preparando subida...';
+        
+        try {
+            // Primero obtener el assignment_id del cliente
+            const assignmentResponse = await fetch(`/api/client/${clientId}/assignment/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                }
+            });
+            
+            if (!assignmentResponse.ok) {
+                const errorData = await assignmentResponse.json();
+                statusDiv.style.cssText = 'margin-top: 10px; padding: 10px; background: #ffebee; border-radius: 8px; color: #c62828;';
+                statusDiv.textContent = '❌ ' + (errorData.error || 'Error al obtener información de la asignación');
+                console.error('Error de asignación:', errorData);
+                return;
+            }
+            
+            const assignmentData = await assignmentResponse.json();
+            
+            if (!assignmentData.success || !assignmentData.assignment_id) {
+                statusDiv.style.cssText = 'margin-top: 10px; padding: 10px; background: #ffebee; border-radius: 8px; color: #c62828;';
+                statusDiv.textContent = '❌ No se pudo obtener información de la asignación';
+                console.error('Datos de asignación inválidos:', assignmentData);
+                return;
+            }
+            
+            console.log('Assignment obtenido:', assignmentData);
+            
+            // Crear FormData con assignment_id
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('assignment_id', assignmentData.assignment_id);
+            formData.append('description', descriptionInput.value);
+            
+            statusDiv.textContent = '⏳ Subiendo archivo...';
+            
+            const response = await fetch('/api/file/upload/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                statusDiv.style.cssText = 'margin-top: 10px; padding: 10px; background: #e8f5e9; border-radius: 8px; color: #2e7d32;';
+                statusDiv.textContent = '✅ Archivo subido exitosamente';
+                
+                // Limpiar formulario
+                fileInput.value = '';
+                descriptionInput.value = '';
+                
+                // Recargar lista de archivos
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                    loadClientFiles(clientId);
+                }, 1500);
+            } else {
+                statusDiv.style.cssText = 'margin-top: 10px; padding: 10px; background: #ffebee; border-radius: 8px; color: #c62828;';
+                statusDiv.textContent = '❌ ' + (data.error || 'Error al subir archivo');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            statusDiv.style.cssText = 'margin-top: 10px; padding: 10px; background: #ffebee; border-radius: 8px; color: #c62828;';
+            statusDiv.textContent = '❌ Error de conexión';
+        }
+    });
     
     // Cerrar modal al hacer clic fuera
     modal.addEventListener('click', (e) => {
@@ -618,6 +657,20 @@ function verArchivosCliente(clientId) {
             modal.remove();
         }
     });
+    
+    // Cargar archivos del cliente
+    loadClientFiles(clientId);
+}
+
+// Función para cargar archivos del cliente
+function loadClientFiles(clientId) {
+    const filesList = document.getElementById('modal-files-list');
+    filesList.innerHTML = `
+        <div style="text-align: center; padding: 40px 20px;">
+            <div style="font-size: 48px; animation: spin 1s linear infinite;">⌛</div>
+            <p style="color: #666; margin-top: 15px;">Cargando archivos...</p>
+        </div>
+    `;
     
     // Cargar archivos del cliente específico
     fetch(`/api/file/list/?client_id=${clientId}`, {
@@ -689,8 +742,16 @@ function verArchivosCliente(clientId) {
                 userSpan.textContent = '👤 ' + file.uploaded_by;
                 
                 const downloadBtn = document.createElement('button');
-                downloadBtn.style.cssText = 'background: #27ae60; color: white; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; margin-left: auto;';
-                downloadBtn.textContent = '⬇️ Descargar';
+                downloadBtn.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; margin-left: auto; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3); display: flex; align-items: center; gap: 6px;';
+                downloadBtn.innerHTML = '<span style="font-size: 16px;">⬇</span> Descargar';
+                downloadBtn.addEventListener('mouseover', () => {
+                    downloadBtn.style.transform = 'translateY(-2px)';
+                    downloadBtn.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.5)';
+                });
+                downloadBtn.addEventListener('mouseout', () => {
+                    downloadBtn.style.transform = '';
+                    downloadBtn.style.boxShadow = '0 2px 8px rgba(102, 126, 234, 0.3)';
+                });
                 downloadBtn.addEventListener('click', () => downloadFile(file.id));
                 
                 actionsDiv.appendChild(dateSpan);
@@ -748,5 +809,12 @@ function getFileIcon(fileType) {
 
 // Función para descargar archivo
 function downloadFile(fileId) {
-    window.location.href = `/api/file/download/${fileId}/`;
+    // Crear un elemento <a> temporal para forzar la descarga
+    const link = document.createElement('a');
+    link.href = `/api/file/download/${fileId}/`;
+    link.download = ''; // Esto fuerza la descarga en lugar de navegación
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }

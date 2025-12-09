@@ -61,12 +61,41 @@ class Price(models.Model):
         help_text='Marcar este plan para mostrarlo como destacado en la página principal'
     )
     
+    # Campo para la imagen del servicio
+    image = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name='Imagen del servicio',
+        help_text='Nombre del archivo de imagen en assets/images/'
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'prices'
         verbose_name = 'Precio'
         verbose_name_plural = 'Precios'
+
+    def save(self, *args, **kwargs):
+        """Asignar automáticamente la imagen según el tipo de servicio si no tiene una"""
+        if not self.image:
+            service_slug = self.service.slug.lower()
+            service_name = self.service.name.lower()
+            plan_lower = self.plan.lower()
+            
+            if 'plan' in service_name and 'estudiante' in service_name:
+                self.image = 'plan estudiante.jpg'
+            elif 'plan' in plan_lower and 'estudiante' in plan_lower:
+                self.image = 'plan estudiante.jpg'
+            elif 'tutoria' in service_slug or 'tutor' in service_slug:
+                self.image = 'imagen tutir.jpg'
+            elif 'terapia' in service_slug or 'psicolog' in service_slug:
+                self.image = 'imagen terapia.jpg'
+            else:
+                # Imagen por defecto
+                self.image = 'Illustration.png'
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.service.name} - {self.plan} (${self.price} {self.currency})"

@@ -38,6 +38,21 @@
                     </span>
                 </div>
 
+                {% if orders %}
+                <div style="background: #e3f2fd; border-left: 4px solid #2196F3; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 24px;">💡</span>
+                        <div>
+                            <strong style="color: #1976D2;">Importante:</strong>
+                            <p style="margin: 5px 0 0 0; color: #555; font-size: 0.9rem;">
+                                Para que los clientes aparezcan en la pestaña "Clientes", debes <strong>generar las sesiones</strong> haciendo clic en el botón "Generar Sesiones" de cada solicitud confirmada.
+                                Esto creará automáticamente una cuenta de usuario para el cliente.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="solicitudes-container" style="display: grid; gap: 20px;">
                     {% for order in orders %}
                     <div class="solicitud-card" style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid {% if order.status == 'pending' %}#ff8c42{% elif order.status == 'confirmed' %}#4CAF50{% else %}#999{% endif %};">
@@ -621,7 +636,17 @@
                         </div>
                     </div>
                     {% empty %}
-                    <p style="grid-column: 1 / -1; text-align: center; color: #999; padding: 40px;">No hay clientes registrados</p>
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 12px; border: 2px dashed #ddd;">
+                        <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;">👥</div>
+                        <h3 style="color: #666; margin-bottom: 15px;">No hay clientes registrados</h3>
+                        <p style="color: #999; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                            Los clientes aparecerán aquí automáticamente cuando <strong>generes las sesiones</strong> de una solicitud desde la pestaña "Solicitudes". 
+                            Al generar sesiones, se crea automáticamente una cuenta de usuario para el cliente.
+                        </p>
+                        <a href="#solicitudes-tab" onclick="showTab('solicitudes')" style="display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                            📋 Ver Solicitudes Pendientes
+                        </a>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
@@ -1959,6 +1984,21 @@ function verAuditoria(id) {
 }
 
 // Funciones para el tab de Clientes
+function showTab(tabName) {
+    // Remover clase active de todos los botones y paneles
+    document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+    
+    // Activar el botón y panel correspondiente
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+    
+    // Scroll al tab
+    setTimeout(() => {
+        document.getElementById(`${tabName}-tab`).scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+}
+
 function verProgresoCliente(clienteId) {
     // Cambiar al tab de sesiones y filtrar por cliente
     document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));

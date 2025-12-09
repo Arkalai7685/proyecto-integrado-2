@@ -281,8 +281,10 @@
 }
 
 .btn-ver-archivos {
-    background: linear-gradient(135deg, #ff8c42, #ff6b35);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.4);
 }
 
 .ver-btn:hover {
@@ -296,10 +298,9 @@
 }
 
 .btn-ver-archivos:hover {
-    background: linear-gradient(135deg, #ff9a5a, #ff7d4d);
-    border-color: rgba(255, 255, 255, 0.6);
+    background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.6);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
 }
 
 .progress-bar-container {

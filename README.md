@@ -1,351 +1,143 @@
-# 🎓 ImpulsaMente - Sistema de Gestión de Apoyo Estudiantil
+﻿#  ImpulsaMente - Sistema de Gestión de Apoyo Estudiantil
 
 [![Django](https://img.shields.io/badge/Django-3.1.12-green.svg)](https://www.djangoproject.com/)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![Status](https://img.shields.io/badge/Status-Producción-success.svg)]()
 
 > Plataforma web integral para la gestión de servicios de apoyo académico y psicológico para estudiantes.
 
 ---
 
-## 📋 Descripción
+##  Descripción
 
 **ImpulsaMente** conecta a estudiantes con profesionales de apoyo educativo (psicólogos y tutores) mediante una plataforma web moderna que facilita:
 
-- 📅 Gestión de sesiones y citas
-- 📊 Seguimiento del progreso estudiantil
-- 📁 Intercambio de archivos educativos
-- 💬 Sistema de chat en tiempo real
-- 🔍 Auditoría y reportes completos
+-  Gestión de sesiones y citas
+-  Seguimiento del progreso estudiantil
+-  Intercambio de archivos educativos
+-  Sistema de chat en tiempo real
+-  Auditoría y reportes completos
 
 ---
 
-## ✨ Características Principales
-
-- 🎨 **Interfaz Moderna:** Diseño responsive con gradientes y animaciones
-- 👥 **Multi-Rol:** Clientes, Psicólogos, Tutores y Administradores
-- 📅 **Gestión de Sesiones:** Programación y seguimiento de citas
-- 📁 **Sistema de Archivos:** Subida/descarga con validación (10MB max)
-- 💬 **Chat en Tiempo Real:** Comunicación directa entre usuarios
-- 🔍 **Búsqueda Avanzada:** Filtros y ordenamiento múltiple
-- 📊 **Seguimiento de Progreso:** Métricas visuales por cliente
-- 🔐 **Auditoría Completa:** Log de todas las actividades
-
----
-
-## 🚀 Inicio Rápido
+##  Inicio Rápido
 
 ### Requisitos Previos
 - Python 3.8+
+- MySQL
 - pip
-- Git (opcional)
 
-### Instalación
+### Instalación Rápida
 
 ```powershell
-# 1. Clonar el repositorio
-git clone [URL_REPOSITORIO]
-cd proyecto-integrado-main
-
-# 2. Crear entorno virtual
-python -m venv .venv
+# 1. Activar entorno virtual
 .\.venv\Scripts\Activate.ps1
 
-# 3. Instalar dependencias
+# 2. Instalar dependencias (si es necesario)
 pip install -r requirements.txt
 
-# 4. Aplicar migraciones
-python manage.py migrate
-
-# 5. Iniciar servidor
+# 3. Iniciar servidor
 python manage.py runserver
 ```
 
 ### Acceso
 - **URL:** http://127.0.0.1:8000/
-- **Documentación Completa:** Ver `DOCUMENTACION_COMPLETA.md`
+- **Admin:** http://127.0.0.1:8000/admin/dashboard/
 
 ---
 
-## 📚 Documentación
+##  Usuarios del Sistema
 
-### 📖 [DOCUMENTACION_COMPLETA.md](DOCUMENTACION_COMPLETA.md)
+**Consulta `DOCUMENTACION_COMPLETA.md` para ver las credenciales de acceso completas**
 
-**Guía completa del sistema que incluye:**
-
-- ✅ **Credenciales de Acceso** - Usuarios y contraseñas del sistema
-- ✅ **Descripción del Proyecto** - Qué es y para qué sirve ImpulsaMente
-- ✅ **Características** - Lista completa de funcionalidades
-- ✅ **Arquitectura** - Estructura técnica del sistema
-- ✅ **Funcionalidades por Rol** - Qué puede hacer cada tipo de usuario
-- ✅ **Guía de Uso** - Cómo usar el sistema paso a paso
-- ✅ **Instalación** - Instrucciones detalladas de instalación
-- ✅ **Tecnologías** - Stack tecnológico utilizado
-
-> 📌 **IMPORTANTE:** Consultar este documento para conocer las credenciales de acceso y toda la información del sistema.
+Roles disponibles:
+-  **Administrador** - Gestión completa del sistema
+-  **Psicólogo** - Gestión de clientes de terapia
+-  **Tutor** - Gestión de estudiantes de tutoría
+-  **Cliente** - Acceso a servicios y seguimiento
 
 ---
 
-## 🔐 Acceso al Sistema
-
-### Usuarios Activos
-
-El sistema cuenta con 3 usuarios activos:
-
-1. **👨‍💼 Administrador (Superusuario)**
-   - Acceso total al sistema
-   - URL: http://127.0.0.1:8000/admin/dashboard/
-
-2. **🧠 Psicólogo**
-   - Gestión de clientes y sesiones
-   - URL: http://127.0.0.1:8000/psicologo/dashboard/
-
-3. **👨‍🎓 Cliente/Estudiante**
-   - Acceso a servicios contratados
-   - URL: http://127.0.0.1:8000/cliente/dashboard/
-
-> 🔑 **Credenciales:** Consultar `DOCUMENTACION_COMPLETA.md` para obtener usuarios y contraseñas.
-
----
-
-## 🛠️ Tecnologías
-
-### Backend
-- Django 3.1.12
-- Python 3.8+
-- SQLite3
-
-### Frontend
-- HTML5, CSS3, JavaScript
-- Django Templates
-- Responsive Design
-
-### Seguridad
-- CSRF Protection
-- Rate Limiting
-- Password Hashing (PBKDF2)
-- File Upload Validation
-
----
-
-## 📊 Estado del Proyecto
-
-### ✅ Sistema Operativo y Funcional
-
-**Última verificación:** 5 de Diciembre de 2025
+##  Estructura del Proyecto
 
 ```
-✅ 6/6 pruebas pasadas
-✅ Base de datos íntegra
-✅ Todas las funcionalidades operativas
-✅ Sin errores de sistema
-```
-
-### Ejecutar Pruebas
-```powershell
-python test_sistema_completo.py
-```
-
-### Estadísticas Actuales
-- **Servicios:** 3 (Tutoría, Terapia, Plan Estudiante)
-- **Usuarios:** 3 (1 Admin, 1 Psicólogo, 1 Cliente)
-- **Asignaciones:** 1 activa
-- **Sesiones:** 4 programadas
-- **Archivos:** 3 en sistema
-
----
-
-## 🎯 Servicios Disponibles
-
-### 1. 📚 Tutoría Académica
-- Apoyo personalizado en materias
-- Técnicas de estudio
-- **Planes:** 6 meses ($80,000) | 12 meses ($150,000)
-
-### 2. 🧠 Terapia Psicológica
-- Apoyo emocional
-- Manejo de estrés y ansiedad
-- **Plan:** 1 mes ($15,000)
-
-### 3. 🎯 Plan Estudiante
-- Combinación de tutoría + terapia
-- Seguimiento integral
-- Plan completo personalizado
-
----
-
-## 📁 Estructura del Proyecto
-
-```
-ImpulsaMente/
-├── manage.py                      # Gestor de Django
-├── requirements.txt               # Dependencias
-├── DOCUMENTACION_COMPLETA.md     # 📖 Documentación completa
-├── test_sistema_completo.py      # Script de pruebas
-├── configurar_precios_destacados.py
-│
-├── ImpulsaMente_project/         # Configuración
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-│
-├── cuentas/                      # App de autenticación
-│   ├── models.py                 # UserProfile
-│   ├── views.py                  # Login, Register
-│   └── forms.py
-│
-├── servicios/                    # App principal
-│   ├── models.py                 # Modelos principales
-│   ├── views.py                  # Vistas y dashboards
-│   ├── file_views.py             # Gestión de archivos
-│   ├── chat_views.py             # Sistema de chat
-│   └── admin.py
-│
-├── templates/                    # Templates HTML
-│   ├── base.html
-│   ├── index.html
-│   ├── login.html
-│   ├── cliente-dashboard.html
-│   ├── psicologo-dashboard.html
-│   └── admin-dashboard.html
-│
-├── assets/                       # Archivos estáticos
-│   ├── css/
-│   ├── js/
-│   └── images/
-│
-└── media/                        # Archivos subidos
-    └── uploads/
+proyecto-integrado-main/
+ manage.py                    # Comando principal Django
+ requirements.txt             # Dependencias Python
+ README.md                    # Este archivo
+ DOCUMENTACION_COMPLETA.md    # Documentación detallada
+ ImpulsaMente_project/        # Configuración del proyecto
+ cuentas/                     # App de autenticación
+ servicios/                   # App principal de servicios
+ assets/                      # Archivos estáticos (CSS, JS, imágenes)
+ templates/                   # Plantillas HTML
+ media/                       # Archivos subidos por usuarios
+ logs/                        # Logs del sistema
+ sql/                         # Scripts SQL
 ```
 
 ---
 
-## 🎮 Uso del Sistema
-
-### Para Estudiantes (Clientes)
-1. Registrarse en el sistema
-2. Explorar servicios disponibles
-3. Solicitar servicio (tutoría, terapia o plan)
-4. Comunicarse con el profesional asignado
-5. Asistir a sesiones programadas
-6. Ver progreso en el dashboard
-
-### Para Profesionales (Psicólogos/Tutores)
-1. Iniciar sesión
-2. Ver clientes asignados
-3. Aceptar nuevas solicitudes
-4. Programar y realizar sesiones
-5. Compartir archivos y recursos
-6. Actualizar progreso del cliente
+##  Características Principales
 
 ### Para Administradores
-1. Gestionar usuarios y servicios
-2. Aprobar solicitudes de clientes
-3. Asignar profesionales
-4. Generar sesiones automáticamente
-5. Monitorear actividad del sistema
-6. Revisar auditoría completa
+- Gestión completa de servicios, precios y usuarios
+- Asignación de clientes a empleados
+- Generación automática de sesiones
+- Panel de auditoría completo
+
+### Para Psicólogos/Tutores
+- Vista de clientes asignados con métricas
+- Gestión de sesiones y progreso
+- Sistema de chat con clientes
+- Subida/descarga de archivos
+- Auditoría por estudiante
+
+### Para Clientes
+- Solicitud de servicios
+- Seguimiento de sesiones
+- Chat con profesionales asignados
+- Gestión de archivos
+- Perfil editable
 
 ---
 
-## 🧪 Scripts Disponibles
+##  Tecnologías Utilizadas
 
-```powershell
-# Iniciar servidor
-python manage.py runserver
-
-# Ejecutar pruebas completas
-python test_sistema_completo.py
-
-# Configurar precios destacados
-python configurar_precios_destacados.py
-
-# Aplicar migraciones
-python manage.py migrate
-
-# Crear superusuario
-python manage.py createsuperuser
-
-# Abrir shell de Django
-python manage.py shell
-```
+- **Backend:** Django 3.1.12, Python 3.8+
+- **Base de Datos:** MySQL
+- **Frontend:** HTML5, CSS3, JavaScript (Vanilla)
+- **Estilos:** CSS personalizado con gradientes y animaciones
+- **Arquitectura:** MVT (Model-View-Template)
 
 ---
 
-## 🔧 Configuración
+##  Documentación Completa
 
-### Variables de Entorno (.env)
-```env
-SECRET_KEY=tu-secret-key
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
-```
+Para información detallada sobre:
+-  Credenciales de acceso
+-  Funcionalidades por rol
+-  Guía de instalación completa
+-  Arquitectura del sistema
+-  Flujos de trabajo
+-  API endpoints
 
-### Base de Datos
-- **Desarrollo:** SQLite3 (por defecto)
-- **Producción:** PostgreSQL (recomendado)
-
----
-
-## 📞 Soporte
-
-### Administrador del Sistema
-- **Email:** manuel@gmail.com
-- **Usuario:** Manuel
-
-### Reportar Problemas
-1. Verificar logs en `/logs/`
-2. Revisar documentación completa
-3. Contactar al administrador
+**Consulta:** [`DOCUMENTACION_COMPLETA.md`](DOCUMENTACION_COMPLETA.md)
 
 ---
 
-## 🚀 Próximas Mejoras
+##  Soporte
 
-- [ ] Notificaciones por email
-- [ ] Recordatorios automáticos
-- [ ] Videollamadas integradas
-- [ ] Pago en línea
-- [ ] App móvil
-- [ ] Gráficos avanzados
-- [ ] Exportación de reportes PDF
-- [ ] Integración con Google Calendar
+Para problemas o consultas:
+1. Revisar la documentación completa
+2. Verificar los logs en la carpeta `logs/`
+3. Consultar la consola del navegador (F12) para errores frontend
 
 ---
 
-## 📄 Licencia
+##  Licencia
 
-Este proyecto es propiedad de **ImpulsaMente**.  
-Uso exclusivo para fines educativos y de gestión interna.
-
----
-
-## 🙏 Agradecimientos
-
-Desarrollado con:
-- Django Framework
-- Python
-- Bootstrap principles
-- Modern CSS3/JavaScript
+Este proyecto es parte de un trabajo académico.
 
 ---
 
-## 📌 Enlaces Importantes
-
-- 📖 **[Documentación Completa](DOCUMENTACION_COMPLETA.md)** - Guía completa con credenciales
-- 🌐 **[Sitio Web](http://127.0.0.1:8000/)** - Página principal
-- 🔐 **[Login](http://127.0.0.1:8000/login/)** - Inicio de sesión
-- 👨‍💼 **[Admin](http://127.0.0.1:8000/admin/dashboard/)** - Panel de administración
-
----
-
-<div align="center">
-
-**ImpulsaMente v1.0**  
-Sistema de Gestión de Apoyo Estudiantil
-
-© 2025 - Todos los derechos reservados
-
-**[Ver Documentación Completa →](DOCUMENTACION_COMPLETA.md)**
-
-</div>
+**ImpulsaMente** - Impulsando el éxito estudiantil 

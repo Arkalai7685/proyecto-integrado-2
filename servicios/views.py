@@ -78,7 +78,7 @@ def tutoria(request):
     """Página de tutoría"""
     try:
         service = Service.objects.get(slug='tutoria')
-        prices = service.prices.all()
+        prices = service.prices.all().order_by('price')
     except Service.DoesNotExist:
         service = None
         prices = []
@@ -89,7 +89,7 @@ def terapia(request):
     """Página de terapia"""
     try:
         service = Service.objects.get(slug='terapia')
-        prices = service.prices.all()
+        prices = service.prices.all().order_by('price')
     except Service.DoesNotExist:
         service = None
         prices = []
@@ -97,14 +97,11 @@ def terapia(request):
 
 
 def plan_estudiante(request):
-    """Página de Plan Estudiante con planes destacados o todos"""
+    """Página de Plan Estudiante - muestra todos los planes disponibles"""
     try:
         plan_estudiante = Service.objects.get(slug='plan-estudiante')
-        # Primero intentar obtener solo planes destacados
-        prices = plan_estudiante.prices.filter(is_featured=True)
-        # Si no hay planes destacados, mostrar todos
-        if not prices.exists():
-            prices = plan_estudiante.prices.all()
+        # Obtener todos los planes ordenados por precio
+        prices = plan_estudiante.prices.all().order_by('price')
     except Service.DoesNotExist:
         plan_estudiante = None
         prices = []
@@ -428,12 +425,11 @@ def generate_sessions_for_order(order, user_account=None):
                 first_name=order.customer.name.split()[0] if order.customer.name else '',
                 last_name=' '.join(order.customer.name.split()[1:]) if len(order.customer.name.split()) > 1 else ''
             )
-            # Asignar al grupo Cliente
-            try:
-                cliente_group = Group.objects.get(name='Cliente')
-                client_user.groups.add(cliente_group)
-            except Group.DoesNotExist:
-                pass
+            # Asignar al grupo Cliente (crear el grupo si no existe)
+            cliente_group, created = Group.objects.get_or_create(name='Cliente')
+            client_user.groups.add(cliente_group)
+            if created:
+                print(f"✓ Grupo 'Cliente' creado automáticamente")
     
     # Crear o buscar asignación
     assignment, created = ClientAssignment.objects.get_or_create(
@@ -2267,12 +2263,11 @@ def generate_student_plan_sessions(order, user_account=None):
                 first_name=order.customer.name.split()[0] if order.customer.name else '',
                 last_name=' '.join(order.customer.name.split()[1:]) if len(order.customer.name.split()) > 1 else ''
             )
-            # Asignar al grupo Cliente
-            try:
-                cliente_group = Group.objects.get(name='Cliente')
-                client_user.groups.add(cliente_group)
-            except Group.DoesNotExist:
-                pass
+            # Asignar al grupo Cliente (crear el grupo si no existe)
+            cliente_group, created = Group.objects.get_or_create(name='Cliente')
+            client_user.groups.add(cliente_group)
+            if created:
+                print(f"✓ Grupo 'Cliente' creado automáticamente")
     
     # Obtener servicios de tutoría y terapia
     try:
@@ -2875,4 +2870,38 @@ def delete_file_view(request, file_id):
         return JsonResponse({
             'success': False,
             'error': f'Error al eliminar archivo: {str(e)}'
+        }, status=500)
+
+
+@login_required
+@require_http_methods(["GET"])
+def get_client_assignment(request, client_id):
+    """Obtener el assignment_id de un cliente para el empleado actual"""
+    try:
+        # Buscar la asignación del empleado con este cliente
+        assignment = ClientAssignment.objects.filter(
+            employee=request.user,
+            client_id=client_id
+        ).first()
+        
+        if not assignment:
+            return JsonResponse({
+                'success': False,
+                'error': 'No se encontró una asignación con este cliente'
+            }, status=404)
+        
+        return JsonResponse({
+            'success': True,
+            'assignment_id': assignment.id,
+            'service': assignment.service.name,
+            'client_name': assignment.client.get_full_name() or assignment.client.username
+        })
+        
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Error en get_client_assignment: {error_details}")
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al obtener asignación: {str(e)}'
         }, status=500)

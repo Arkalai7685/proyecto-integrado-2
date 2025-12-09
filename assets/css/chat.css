@@ -29,7 +29,8 @@
     font-weight: 600;
 }
 
-.chat-conversations-list {
+.chat-conversations-list,
+.conversations-list {
     flex: 1;
     overflow-y: auto;
     padding: 10px;

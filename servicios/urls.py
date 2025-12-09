@@ -24,6 +24,7 @@ urlpatterns = [
     path('tutor/dashboard/', views.tutor_dashboard, name='tutor_dashboard'),
     path('auditoria-estudiante/', views.auditoria_estudiante, name='auditoria_estudiante'),
     path('api/client/<int:client_id>/details/', views.get_client_details, name='get_client_details'),
+    path('api/client/<int:client_id>/assignment/', views.get_client_assignment, name='get_client_assignment'),
     path('api/session/<int:session_id>/update-status/', views.update_session_status, name='update_session_status'),
     
     # Admin Dashboard URLs
